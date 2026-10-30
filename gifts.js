@@ -162,7 +162,7 @@ function gDraw(v){const w=v.videoWidth,h=v.videoHeight>>1;if(!w||!h)return;
  if(gOc.width!==w||gOc.height!==h*2){gOc.width=w;gOc.height=h*2;gId=null}
  gOx.drawImage(v,0,0);const c=gOx.getImageData(0,0,w,h),m=gOx.getImageData(0,h,w,h).data,d=c.data;
  for(let i=0;i<d.length;i+=4){let a=(m[i+1]-5)*1.06;d[i+3]=a<0?0:a>255?255:a}gC2.putImageData(c,0,0)}
-let gRaf=0;function gLoop(){gRaf=0;if(!curV)return;gDraw(curV);gRaf=curV.requestVideoFrameCallback?(curV.requestVideoFrameCallback(gLoop),1):requestAnimationFrame(gLoop)}
+let gRaf=0;function gLoop(){gRaf=0;const v=curV;if(!v)return;gDraw(v);const go=()=>{if(curV===v)gLoop()};gRaf=v.requestVideoFrameCallback?(v.requestVideoFrameCallback(go),1):requestAnimationFrame(go)}
 function vel(n){const f=VF[n];if(!f||VBAD[n]||RM.matches)return null;if(VC[n])return VC[n];
  const v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.setAttribute('webkit-playsinline','');v.preload='metadata';v.crossOrigin='anonymous';
  v.className='gsrc';v.src=`gifts/${f}_sa.mp4?v=${GV}`;v.onerror=()=>{VBAD[n]=1};return VC[n]=v}
@@ -170,7 +170,7 @@ const preV=n=>{const v=vel(n);if(v&&v!==curV&&v.preload!='auto'){v.preload='auto
 setTimeout(()=>Object.keys(VF).forEach(vel),2500);
 gp.querySelectorAll('.gi').forEach(b=>b.addEventListener('click',()=>{const g=GL[b.dataset.i];if(VF[g[0]])preV(g[0])}));setTimeout(()=>['rose','heart','box','pad'].forEach(preV),3000);
 let curV=null;
-function stopV(){vig.classList.remove('on');gCv.classList.remove('on');if(curV){curV.pause();curV.remove();curV=null}}
+function stopV(){gRaf=0;vig.classList.remove('on');gCv.classList.remove('on');if(curV){curV.pause();curV.remove();curV=null}}
 // returns duration (s) if video playback started, else null (caller falls back to code scene)
 function playV(g,onFail){const v=vel(g[0]);if(!v||!cvMode)return null;stopV();if(v.parentNode!==gv)gv.append(v);
  curV=v;v.currentTime=0;let ok=0;const fail=()=>{if(ok||curV!==v)return;VBAD[g[0]]=1;stopV();onFail()};
