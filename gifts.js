@@ -1,6 +1,6 @@
 (()=>{
 const GL=[['rose','Gül',1,'255,70,90'],['heart','Ürək',5,'83,252,24'],['box','Sürpriz',10,'120,230,60'],['pad','Qızıl pult',50,'255,200,60'],['gem','Almaz',100,'90,190,255'],['rocket','Uçan Qala',500,'140,255,90'],['crown','Tac',1000,'255,196,40'],['lion','Şir',5000,'255,170,30']];
-const ICN=n=>`icons3d/gift_${n}.png`,coin=s=>`<img src="${ICN('coin')}" width="${s}" height="${s}" alt="">`;
+const ICN=n=>`icons3d/gift_${n}.png?v=${window.GIFT_VER||1}`,coin=s=>`<img src="${ICN('coin')}" width="${s}" height="${s}" alt="">`;
 const nf=n=>n.toLocaleString('az-AZ').replace(/,/g,' ');
 const BK=()=>GC.ukey('coins');const getBal=()=>GC.user()?GC.LS.get(BK(),1000):0;let bal=getBal(),sel=4,combo=0,ct=null;
 const chat=document.querySelector('.chat'),player=document.getElementById('player');
