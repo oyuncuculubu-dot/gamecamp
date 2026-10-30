@@ -93,3 +93,4 @@
 .gxb,.gxcnt{z-index:2}
 @media(max-width:700px){.gvid video{height:122%}}
 @media(prefers-reduced-motion:reduce){.gvid{display:none}}
+.player:has(.gvid video.on) .pbig{opacity:0;transition:opacity .2s}
