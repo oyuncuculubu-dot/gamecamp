@@ -137,24 +137,44 @@ function scene(g,big){fit();const n=g[0],m=Math.min(W,H),s={t0:performance.now()
  if(!big){const sm=SC.filter(q=>!q.big);if(sm.length>=4){const o=sm[0];o.done=1;o.els.forEach(e=>e.remove())}s.x+=R(-8,8)}
  s.big=big;s.u=SCN[n](s);if(RM.matches){const u=s.u;s.u=(t,dt,q)=>{u(Math.max(t,1.1),dt,q)};}
  SC.push(s);kick();return s}
-// ---- intro videos for top gifts (VP9-alpha webm; H.264 black-bg mp4 + mix-blend-mode:screen for Safari/iOS) ----
+// ---- intro videos for top gifts: "stacked alpha" H.264 mp4 (color top half, alpha matte bottom half)
+// composited into a <canvas> via WebGL (2D-canvas fallback) -> true transparency on every browser, no blend modes / VP9 alpha ----
 const VF={rose:'rose',heart:'heart',box:'box',pad:'pad',gem:'diamond',rocket:'rocket',crown:'crown',lion:'lion'};
-const tv=document.createElement('video'),ua=navigator.userAgent;
-const ALPHA=!/^((?!chrome|android|crios|fxios).)*safari/i.test(ua)&&!/iPhone|iPad|iPod/.test(ua)&&tv.canPlayType('video/webm; codecs="vp9"')!='';
+const GV=window.GIFT_VER||'5';
 const gv=document.createElement('div');gv.className='gvid';player.insertBefore(gv,fx);const vig=document.createElement('div');vig.className='gvig';player.insertBefore(vig,gv);const VC={},VBAD={};
+const gCv=document.createElement('canvas');gCv.className='gcv';gCv.width=540;gCv.height=960;gv.append(gCv);
+let gGl=null,gC2=null,gTx=null,cvMode='';
+try{gGl=gCv.getContext('webgl',{premultipliedAlpha:true,alpha:true,antialias:false})||gCv.getContext('experimental-webgl',{premultipliedAlpha:true,alpha:true})}catch(e){gGl=null}
+if(gGl){const gSh=(t,src)=>{const o=gGl.createShader(t);gGl.shaderSource(o,src);gGl.compileShader(o);return o};
+ const gPr=gGl.createProgram();
+ gGl.attachShader(gPr,gSh(gGl.VERTEX_SHADER,'attribute vec2 p;varying vec2 u;void main(){u=vec2(p.x*.5+.5,.5-p.y*.5);gl_Position=vec4(p,0.,1.);}'));
+ gGl.attachShader(gPr,gSh(gGl.FRAGMENT_SHADER,'precision mediump float;varying vec2 u;uniform sampler2D t;void main(){vec3 c=texture2D(t,vec2(u.x,u.y*.5)).rgb;float a=texture2D(t,vec2(u.x,.5+u.y*.5)).g;a=clamp((a-.02)/.96,0.,1.);gl_FragColor=vec4(c*a,a);}'));
+ gGl.linkProgram(gPr);if(!gGl.getProgramParameter(gPr,gGl.LINK_STATUS))gGl=null;else{gGl.useProgram(gPr);
+ const gBf=gGl.createBuffer();gGl.bindBuffer(gGl.ARRAY_BUFFER,gBf);gGl.bufferData(gGl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gGl.STATIC_DRAW);
+ const l=gGl.getAttribLocation(gPr,'p');gGl.enableVertexAttribArray(l);gGl.vertexAttribPointer(l,2,gGl.FLOAT,false,0,0);
+ gTx=gGl.createTexture();gGl.bindTexture(gGl.TEXTURE_2D,gTx);[gGl.TEXTURE_WRAP_S,gGl.TEXTURE_WRAP_T].forEach(k=>gGl.texParameteri(gGl.TEXTURE_2D,k,gGl.CLAMP_TO_EDGE));
+ gGl.texParameteri(gGl.TEXTURE_2D,gGl.TEXTURE_MIN_FILTER,gGl.LINEAR);gGl.texParameteri(gGl.TEXTURE_2D,gGl.TEXTURE_MAG_FILTER,gGl.LINEAR);gGl.pixelStorei(gGl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
+ gGl.clearColor(0,0,0,0);cvMode='webgl'}}
+let gOc,gOx,gId;if(!gGl){gC2=gCv.getContext('2d');gOc=document.createElement('canvas');gOc.width=540;gOc.height=1920;gOx=gOc.getContext('2d',{willReadFrequently:true});cvMode='2d'}
+function gDraw(v){const w=v.videoWidth,h=v.videoHeight>>1;if(!w||!h)return;
+ if(gCv.width!==w||gCv.height!==h){gCv.width=w;gCv.height=h}
+ if(gGl){gGl.viewport(0,0,w,h);gGl.clear(gGl.COLOR_BUFFER_BIT);try{gGl.texImage2D(gGl.TEXTURE_2D,0,gGl.RGB,gGl.RGB,gGl.UNSIGNED_BYTE,v)}catch(e){return}gGl.drawArrays(gGl.TRIANGLE_STRIP,0,4);return}
+ if(gOc.width!==w||gOc.height!==h*2){gOc.width=w;gOc.height=h*2;gId=null}
+ gOx.drawImage(v,0,0);const c=gOx.getImageData(0,0,w,h),m=gOx.getImageData(0,h,w,h).data,d=c.data;
+ for(let i=0;i<d.length;i+=4){let a=(m[i+1]-5)*1.06;d[i+3]=a<0?0:a>255?255:a}gC2.putImageData(c,0,0)}
+let gRaf=0;function gLoop(){gRaf=0;if(!curV)return;gDraw(curV);gRaf=curV.requestVideoFrameCallback?(curV.requestVideoFrameCallback(gLoop),1):requestAnimationFrame(gLoop)}
 function vel(n){const f=VF[n];if(!f||VBAD[n]||RM.matches)return null;if(VC[n])return VC[n];
- const v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
- v.className=ALPHA?'a':'scr';v.src=`gifts/${f}.${ALPHA?'webm':'mp4'}`;v.onerror=()=>{VBAD[n]=1};return VC[n]=v}
+ const v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.setAttribute('webkit-playsinline','');v.preload='metadata';v.crossOrigin='anonymous';
+ v.className='gsrc';v.src=`gifts/${f}_sa.mp4?v=${GV}`;v.onerror=()=>{VBAD[n]=1};return VC[n]=v}
 const preV=n=>{const v=vel(n);if(v&&v!==curV&&v.preload!='auto'){v.preload='auto';v.load()}};
-// light preload: metadata after idle; full file only when a big gift is selected in the panel
 setTimeout(()=>Object.keys(VF).forEach(vel),2500);
 gp.querySelectorAll('.gi').forEach(b=>b.addEventListener('click',()=>{const g=GL[b.dataset.i];if(VF[g[0]])preV(g[0])}));setTimeout(()=>['rose','heart','box','pad'].forEach(preV),3000);
 let curV=null;
-function stopV(){vig.classList.remove('on');if(curV){curV.pause();curV.classList.remove('on');curV=null}}
+function stopV(){vig.classList.remove('on');gCv.classList.remove('on');if(curV){curV.pause();curV.remove();curV=null}}
 // returns duration (s) if video playback started, else null (caller falls back to code scene)
-function playV(g,onFail){const v=vel(g[0]);if(!v)return null;stopV();if(v.parentNode!==gv)gv.append(v);
+function playV(g,onFail){const v=vel(g[0]);if(!v||!cvMode)return null;stopV();if(v.parentNode!==gv)gv.append(v);
  curV=v;v.currentTime=0;let ok=0;const fail=()=>{if(ok||curV!==v)return;VBAD[g[0]]=1;stopV();onFail()};
- v.onplaying=()=>{ok=1;v.classList.add('on');vig.classList.add('on')};v.onended=()=>{if(curV===v)stopV()};v.onerror=fail;
+ v.onplaying=()=>{if(curV!==v)return;ok=1;gDraw(v);gCv.classList.add('on');vig.classList.add('on');if(!gRaf)gLoop()};v.onended=()=>{if(curV===v)stopV()};v.onerror=fail;
  const p=v.play();p&&p.catch(fail);setTimeout(()=>{if(!ok&&v.readyState<2)fail()},1800);return 5}
 let bigT=null,lastBig=null,curBig=null;
 const BQ=[];const busy=()=>!!lastBig;function nextQ(){const q=BQ.shift();if(q)showBig(...q)}
@@ -178,7 +198,7 @@ const CM={};
 function chatAdd(u,g,k){const key=u+g[0];if(CM[key]&&CM[key].isConnected&&k>1){CM[key].querySelector('.x').textContent='x'+k;return}
  const d=document.createElement('div');d.className='m gft';d.innerHTML=`<img src="${ICN(g[0])}" alt=""><span class="t"><b>${u}</b>${g[1]} göndərdi</span><span class="x">x${k}</span>`;msgs.append(d);msgs.scrollTop=1e5;CM[key]=d}
 function fire(u,i,k){const g=GL[i];laneAdd(u,g,k);chatAdd(u,g,k);if(g[2]>=100||(VF[g[0]]&&vel(g[0])))showBig(u,g,k);else scene(g,0)}
-window.GiftDemo={fire,open,GL,scene,video:()=>curV&&{src:curV.currentSrc,cls:curV.className,t:curV.currentTime}};
+window.GiftDemo={fire,open,GL,scene,video:()=>curV&&{src:curV.currentSrc,mode:cvMode,on:gCv.classList.contains('on'),t:curV.currentTime}};
 // auto demo
 const U=['Kamal','Aysu','RəşadPro','Nigar','Toğrul','Leyla','Orxan'];
 const seq=[[1,0,1],[1,0,2],[3,1,1],[1,0,3],[0,6,1],[0,6,2],[0,6,3],[2,2,1],[4,4,1],[5,7,1],[3,1,2],[6,5,1]];
