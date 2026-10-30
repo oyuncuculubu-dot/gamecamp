@@ -131,7 +131,7 @@ lion(s){const z=s.z*1.1,x0=s.x,y0=s.y,ry=s.add(layer('rays gold')),e=s.add(spr('
   if(t>.85&&!r1){r1=1;roar(x0,y0)}if(t>2.1&&!r2){r2=1;roar(x0,y0)}
   if(t>1&&t<4&&Math.random()<.7){const a=R(0,6.28);emit({k:'dot',x:x0+Math.cos(a)*z*.45,y:y0+Math.sin(a)*z*.45,vx:Math.cos(a)*R(.5,2),vy:Math.sin(a)*R(.5,2)-.6,r:R(1.5,3),c:Math.random()<.5?'255,200,80':'255,150,40',d:.02})}}}
 };
-const DUR={rose:1.9,heart:2.3,box:2.4,pad:2.2,gem:4,rocket:5,crown:4,lion:4.5};
+const DUR={rose:1.9,heart:2.3,box:2.4,pad:2.2,gem:4,rocket:5,crown:4,lion:5};
 function scene(g,big){fit();const n=g[0],m=Math.min(W,H),s={t0:performance.now(),d:DUR[n],els:[],add(e){this.els.push(e);return e},
  z:big?m*(mob()?.5:.46):m*(mob()?.3:.26),x:big?W/2:W*(mob()?.22:.16),y:big?H*.44:H*(mob()?.62:.66)};
  if(!big){const sm=SC.filter(q=>!q.big);if(sm.length>=4){const o=sm[0];o.done=1;o.els.forEach(e=>e.remove())}s.x+=R(-8,8)}
@@ -170,11 +170,17 @@ const preV=n=>{const v=vel(n);if(v&&v!==curV&&v.preload!='auto'){v.preload='auto
 setTimeout(()=>Object.keys(VF).forEach(vel),2500);
 gp.querySelectorAll('.gi').forEach(b=>b.addEventListener('click',()=>{const g=GL[b.dataset.i];if(VF[g[0]])preV(g[0])}));setTimeout(()=>['rose','heart','box','pad'].forEach(preV),3000);
 let curV=null;
-function stopV(){gRaf=0;vig.classList.remove('on');gCv.classList.remove('on');if(curV){curV.pause();curV.remove();curV=null}}
+// lion intro roar (CC0, sfxmint lion-roar-01 + rumble), synced to the stacked-alpha video; opt-out: localStorage gc_mute='1'
+const SFX={lion:'gifts/lion_roar.mp3'},AU={};const sndOff=()=>{try{return localStorage.getItem('gc_mute')==='1'}catch(e){return false}};
+function sfx(n){const f=SFX[n];if(!f)return null;if(!AU[n]){const a=new Audio(`${f}?v=${GV}`);a.preload='auto';a.volume=.8;AU[n]=a}return AU[n]}
+function sfxPlay(n,t){const a=sfx(n);if(!a||sndOff())return;try{a.currentTime=t||0;const p=a.play();p&&p.catch(()=>{})}catch(e){}}
+function sfxStop(){Object.values(AU).forEach(a=>{try{a.pause()}catch(e){}})}
+setTimeout(()=>Object.keys(SFX).forEach(sfx),2500);
+function stopV(){sfxStop();gRaf=0;vig.classList.remove('on');gCv.classList.remove('on');if(curV){curV.pause();curV.remove();curV=null}}
 // returns duration (s) if video playback started, else null (caller falls back to code scene)
 function playV(g,onFail){const v=vel(g[0]);if(!v||!cvMode)return null;stopV();if(v.parentNode!==gv)gv.append(v);
  curV=v;v.currentTime=0;let ok=0;const fail=()=>{if(ok||curV!==v)return;VBAD[g[0]]=1;stopV();onFail()};
- v.onplaying=()=>{if(curV!==v)return;ok=1;gDraw(v);gCv.classList.add('on');vig.classList.add('on');if(!gRaf)gLoop()};v.onended=()=>{if(curV===v)stopV()};v.onerror=fail;
+ v.onplaying=()=>{if(curV!==v)return;ok=1;sfxPlay(g[0],v.currentTime);gDraw(v);gCv.classList.add('on');vig.classList.add('on');if(!gRaf)gLoop()};v.onended=()=>{if(curV===v)stopV()};v.onerror=fail;
  const p=v.play();p&&p.catch(fail);setTimeout(()=>{if(!ok&&v.readyState<2)fail()},1800);return 5}
 let bigT=null,lastBig=null,curBig=null;
 const BQ=[];const busy=()=>!!lastBig;function nextQ(){const q=BQ.shift();if(q)showBig(...q)}
@@ -184,7 +190,7 @@ function showBig(u,g,k){if(busy()&&!(lastBig.u==u&&lastBig.g==g)){const j=BQ.fin
   const vd=playV(g,()=>{curBig=scene(g,1)});if(vd){fit();curBig={t0:performance.now(),x:W/2,y:H*.44,vid:1,get done(){return !curV}}}else curBig=scene(g,1);
   gxb.innerHTML=`<div class="bnr"><span class="av">${u[0]}</span><div><b>${u}</b><small>göndərdi <em>${g[1]}</em> · ${coin(13)} ${nf(g[2])}</small></div><img class="bgi" src="${ICN(g[0])}" alt=""><i class="bx">x${k}</i></div>`;
   gxb.classList.remove('on');void gxb.offsetWidth;gxb.classList.add('on')}
- else{if(curBig.vid&&curV){curV.currentTime=Math.min(curV.currentTime,1.5)}else curBig.t0=Math.max(curBig.t0,performance.now()-1500*1);gxb.querySelectorAll('.bnr').forEach(b=>b.getAnimations().forEach(a=>a.currentTime=Math.min(a.currentTime,800)));
+ else{if(curBig.vid&&curV){curV.currentTime=Math.min(curV.currentTime,1.5);if(AU[g[0]]&&!AU[g[0]].paused)AU[g[0]].currentTime=curV.currentTime}else curBig.t0=Math.max(curBig.t0,performance.now()-1500*1);gxb.querySelectorAll('.bnr').forEach(b=>b.getAnimations().forEach(a=>a.currentTime=Math.min(a.currentTime,800)));
   const bx=gxb.querySelector('.bx');if(bx){bx.textContent='x'+k;bx.classList.remove('bump');void bx.offsetWidth;bx.classList.add('bump')}burstAt(curBig.x,curBig.y,30,{s0:2,s1:8,p:{k:'star',r:5,c:g[3],d:.02}})}
  lastBig={u,g};
  if(k>1&&!(curBig&&curBig.vid)){cnt.innerHTML=`<small>x</small>${k}`;cnt.classList.remove('pop');void cnt.offsetWidth;cnt.classList.add('pop')}else cnt.classList.remove('pop');
