@@ -138,36 +138,37 @@ function scene(g,big){fit();const n=g[0],m=Math.min(W,H),s={t0:performance.now()
  s.big=big;s.u=SCN[n](s);if(RM.matches){const u=s.u;s.u=(t,dt,q)=>{u(Math.max(t,1.1),dt,q)};}
  SC.push(s);kick();return s}
 // ---- intro videos for top gifts (VP9-alpha webm; H.264 black-bg mp4 + mix-blend-mode:screen for Safari/iOS) ----
-const VF={gem:'diamond',rocket:'rocket',crown:'crown',lion:'lion'};
+const VF={rose:'rose',heart:'heart',box:'box',pad:'pad',gem:'diamond',rocket:'rocket',crown:'crown',lion:'lion'};
 const tv=document.createElement('video'),ua=navigator.userAgent;
 const ALPHA=!/^((?!chrome|android|crios|fxios).)*safari/i.test(ua)&&!/iPhone|iPad|iPod/.test(ua)&&tv.canPlayType('video/webm; codecs="vp9"')!='';
-const gv=document.createElement('div');gv.className='gvid';player.insertBefore(gv,fx);const VC={},VBAD={};
+const gv=document.createElement('div');gv.className='gvid';player.insertBefore(gv,fx);const vig=document.createElement('div');vig.className='gvig';player.insertBefore(vig,gv);const VC={},VBAD={};
 function vel(n){const f=VF[n];if(!f||VBAD[n]||RM.matches)return null;if(VC[n])return VC[n];
  const v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
  v.className=ALPHA?'a':'scr';v.src=`gifts/${f}.${ALPHA?'webm':'mp4'}`;v.onerror=()=>{VBAD[n]=1};return VC[n]=v}
-const preV=n=>{const v=vel(n);if(v&&v.preload!='auto'){v.preload='auto';v.load()}};
+const preV=n=>{const v=vel(n);if(v&&v!==curV&&v.preload!='auto'){v.preload='auto';v.load()}};
 // light preload: metadata after idle; full file only when a big gift is selected in the panel
 setTimeout(()=>Object.keys(VF).forEach(vel),2500);
-gp.querySelectorAll('.gi').forEach(b=>b.addEventListener('click',()=>{const g=GL[b.dataset.i];if(VF[g[0]])preV(g[0])}));
+gp.querySelectorAll('.gi').forEach(b=>b.addEventListener('click',()=>{const g=GL[b.dataset.i];if(VF[g[0]])preV(g[0])}));setTimeout(()=>['rose','heart','box','pad'].forEach(preV),3000);
 let curV=null;
-function stopV(){if(curV){curV.pause();curV.classList.remove('on');curV=null}}
+function stopV(){vig.classList.remove('on');if(curV){curV.pause();curV.classList.remove('on');curV=null}}
 // returns duration (s) if video playback started, else null (caller falls back to code scene)
 function playV(g,onFail){const v=vel(g[0]);if(!v)return null;stopV();if(v.parentNode!==gv)gv.append(v);
  curV=v;v.currentTime=0;let ok=0;const fail=()=>{if(ok||curV!==v)return;VBAD[g[0]]=1;stopV();onFail()};
- v.onplaying=()=>{ok=1;v.classList.add('on')};v.onended=()=>{if(curV===v)stopV()};v.onerror=fail;
+ v.onplaying=()=>{ok=1;v.classList.add('on');vig.classList.add('on')};v.onended=()=>{if(curV===v)stopV()};v.onerror=fail;
  const p=v.play();p&&p.catch(fail);setTimeout(()=>{if(!ok&&v.readyState<2)fail()},1800);return 5}
 let bigT=null,lastBig=null,curBig=null;
-function showBig(u,g,k){gxb.style.setProperty('--gc',g[3]);fx.style.setProperty('--gc',g[3]);
+const BQ=[];const busy=()=>!!lastBig;function nextQ(){const q=BQ.shift();if(q)showBig(...q)}
+function showBig(u,g,k){if(busy()&&!(lastBig.u==u&&lastBig.g==g)){const j=BQ.findIndex(q=>q[0]==u&&q[1]==g);if(j>=0)BQ[j][2]=k;else if(BQ.length<6)BQ.push([u,g,k]);return}gxb.style.setProperty('--gc',g[3]);fx.style.setProperty('--gc',g[3]);
  const same=lastBig&&lastBig.u==u&&lastBig.g==g&&curBig&&!curBig.done;
  if(!same){SC.filter(q=>q.big).forEach(q=>{q.done=1;q.els.forEach(e=>e.remove())});stopV();
   const vd=playV(g,()=>{curBig=scene(g,1)});if(vd){fit();curBig={t0:performance.now(),x:W/2,y:H*.44,vid:1,get done(){return !curV}}}else curBig=scene(g,1);
-  gxb.innerHTML=`<div class="bnr"><span class="av">${u[0]}</span><div><b>${u}</b><small><em>${g[1]}</em> göndərdi · ${coin(13)} ${nf(g[2])}</small></div></div>`;
+  gxb.innerHTML=`<div class="bnr"><span class="av">${u[0]}</span><div><b>${u}</b><small>göndərdi <em>${g[1]}</em> · ${coin(13)} ${nf(g[2])}</small></div><img class="bgi" src="${ICN(g[0])}" alt=""><i class="bx">x${k}</i></div>`;
   gxb.classList.remove('on');void gxb.offsetWidth;gxb.classList.add('on')}
  else{if(curBig.vid&&curV){curV.currentTime=Math.min(curV.currentTime,1.5)}else curBig.t0=Math.max(curBig.t0,performance.now()-1500*1);gxb.querySelectorAll('.bnr').forEach(b=>b.getAnimations().forEach(a=>a.currentTime=Math.min(a.currentTime,800)));
-  burstAt(curBig.x,curBig.y,30,{s0:2,s1:8,p:{k:'star',r:5,c:g[3],d:.02}})}
+  const bx=gxb.querySelector('.bx');if(bx){bx.textContent='x'+k;bx.classList.remove('bump');void bx.offsetWidth;bx.classList.add('bump')}burstAt(curBig.x,curBig.y,30,{s0:2,s1:8,p:{k:'star',r:5,c:g[3],d:.02}})}
  lastBig={u,g};
- if(k>1){cnt.innerHTML=`<small>x</small>${k}`;cnt.classList.remove('pop');void cnt.offsetWidth;cnt.classList.add('pop')}else cnt.classList.remove('pop');
- clearTimeout(bigT);bigT=setTimeout(()=>{gxb.classList.remove('on');cnt.classList.remove('pop');lastBig=null},(curBig&&curBig.vid?5:DUR[g[0]])*1000+200)}
+ if(k>1&&!(curBig&&curBig.vid)){cnt.innerHTML=`<small>x</small>${k}`;cnt.classList.remove('pop');void cnt.offsetWidth;cnt.classList.add('pop')}else cnt.classList.remove('pop');
+ clearTimeout(bigT);bigT=setTimeout(()=>{gxb.classList.remove('on');cnt.classList.remove('pop');lastBig=null;stopV();setTimeout(nextQ,250)},(curBig&&curBig.vid?5:DUR[g[0]])*1000+200)}
 const LN={};
 function laneAdd(u,g,k){const key=u+g[0];let e=LN[key];
  if(e){const i=e.el.querySelector('i');i.textContent='x'+k;i.classList.remove('bump');void i.offsetWidth;i.classList.add('bump');clearTimeout(e.t)}
@@ -176,7 +177,7 @@ function laneAdd(u,g,k){const key=u+g[0];let e=LN[key];
 const CM={};
 function chatAdd(u,g,k){const key=u+g[0];if(CM[key]&&CM[key].isConnected&&k>1){CM[key].querySelector('.x').textContent='x'+k;return}
  const d=document.createElement('div');d.className='m gft';d.innerHTML=`<img src="${ICN(g[0])}" alt=""><span class="t"><b>${u}</b>${g[1]} göndərdi</span><span class="x">x${k}</span>`;msgs.append(d);msgs.scrollTop=1e5;CM[key]=d}
-function fire(u,i,k){const g=GL[i];laneAdd(u,g,k);chatAdd(u,g,k);if(g[2]>=100)showBig(u,g,k);else scene(g,0)}
+function fire(u,i,k){const g=GL[i];laneAdd(u,g,k);chatAdd(u,g,k);if(g[2]>=100||(VF[g[0]]&&vel(g[0])))showBig(u,g,k);else scene(g,0)}
 window.GiftDemo={fire,open,GL,scene,video:()=>curV&&{src:curV.currentSrc,cls:curV.className,t:curV.currentTime}};
 // auto demo
 const U=['Kamal','Aysu','RəşadPro','Nigar','Toğrul','Leyla','Orxan'];

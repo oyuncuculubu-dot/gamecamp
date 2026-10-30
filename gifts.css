@@ -94,3 +94,15 @@
 @media(max-width:700px){.gvid video{height:122%}}
 @media(prefers-reduced-motion:reduce){.gvid{display:none}}
 .player:has(.gvid video.on) .pbig{opacity:0;transition:opacity .2s}
+
+/* v3: dark vignette behind intro, premium banner */
+.gvig{position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;transition:opacity .45s ease;background:radial-gradient(ellipse 70% 60% at 50% 46%,rgba(0,0,0,.55),rgba(0,0,0,.82) 75%,rgba(0,0,0,.9))}
+.gvig.on{opacity:1}
+.gvid video{transition:opacity .45s ease}
+.bnr{padding:6px 10px 6px 6px;background:linear-gradient(90deg,rgba(10,12,10,.88),rgba(var(--gc),.28));backdrop-filter:blur(8px)}
+.bnr .av{background:linear-gradient(135deg,#ffd75a,#53fc18);color:#000;font-weight:900;display:grid;place-items:center;border-radius:50%}
+.bnr .bgi{width:46px;height:46px;margin:-10px 0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))}
+.bnr .bx{font-style:italic;font-weight:900;font-size:24px;color:#fff;-webkit-text-stroke:1px #ffb02e;text-shadow:0 0 12px rgba(255,176,46,.8);padding-right:6px;display:inline-block}
+.bnr .bx.bump{animation:bump .3s}
+@media(max-width:600px){.bnr .bgi{width:32px;height:32px}.bnr .bx{font-size:17px}}
+@media(max-width:600px){.bnr{bottom:5%}}
