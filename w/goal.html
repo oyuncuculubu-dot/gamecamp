@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikFinity AZ — Canlı Yayım Bəyəni Hədəfi (Broadcast Goal Bar v3.0)</title>
+  <script src="tf-env.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Chakra Petch', 'Plus Jakarta Sans', sans-serif;
+      --gold-light: #FFF3B0;
+      --gold-mid: #E6B347;
+      --crimson: #FE2C55;
+      --cyan: #25F4EE;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    body.with-backdrop {
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 40%, rgba(230, 179, 71, 0.10) 0%, transparent 65%),
+        linear-gradient(180deg, #07080D 0%, #0A0C14 100%);
+    }
+
+    .goal-broadcast-frame {
+      position: relative;
+      width: 680px;
+      max-width: 96vw;
+      padding: 18px 22px 16px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(16, 19, 28, 0.94) 0%, rgba(9, 11, 17, 0.97) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.78),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+    }
+
+    .goal-broadcast-frame::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 15%;
+      right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 243, 176, 0.65), #E6B347, rgba(255, 243, 176, 0.65), transparent);
+    }
+
+    .goal-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .goal-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .emblem-crest {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(230, 179, 71, 0.22) 0%, rgba(15, 18, 28, 0.95) 100%);
+      border: 1px solid rgba(230, 179, 71, 0.50);
+      box-shadow: inset 0 1px 0 rgba(255, 243, 176, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .goal-title-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .goal-title {
+      font-family: var(--font-display);
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #F8FAFC;
+    }
+
+    .goal-sub {
+      font-size: 11px;
+      font-weight: 500;
+      color: #94A3B8;
+    }
+
+    .goal-sub strong {
+      color: #FFF3B0;
+      font-weight: 600;
+    }
+
+    .goal-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .goal-counter-box {
+      text-align: right;
+    }
+
+    .goal-numbers {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #FFFFFF;
+      letter-spacing: 0.02em;
+    }
+
+    .goal-numbers span.target {
+      color: #64748B;
+      font-weight: 600;
+    }
+
+    .goal-pct-badge {
+      padding: 5px 10px;
+      border-radius: 7px;
+      background: rgba(230, 179, 71, 0.16);
+      border: 1px solid rgba(230, 179, 71, 0.45);
+      color: #FFF3B0;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Multi-layered Liquid Gold/Crimson Progress Track */
+    .goal-track-shell {
+      position: relative;
+      width: 100%;
+      height: 16px;
+      border-radius: 8px;
+      background: #080A10;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      padding: 2px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85);
+      margin-bottom: 10px;
+    }
+
+    .goal-bar-fill {
+      position: relative;
+      height: 100%;
+      width: 64.8%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #FE2C55 0%, #E6B347 65%, #FFF3B0 100%);
+      box-shadow: 0 0 18px rgba(230, 179, 71, 0.40);
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow: hidden;
+    }
+
+    .goal-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), transparent);
+    }
+
+    /* Milestone Markers Row (25K, 50K, 75K, 100K) */
+    .milestones-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .milestone-step {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 9px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-family: var(--font-display);
+      font-size: 10.5px;
+      font-variant-numeric: tabular-nums;
+      color: #64748B;
+    }
+
+    .milestone-step.reached {
+      background: rgba(230, 179, 71, 0.09);
+      border-color: rgba(230, 179, 71, 0.30);
+      color: #FFF3B0;
+    }
+
+    .milestone-step .m-status {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="gold-emblem-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFF8D6"/>
+        <stop offset="50%" stop-color="#E6B347"/>
+        <stop offset="100%" stop-color="#9A6B13"/>
+      </linearGradient>
+      <g id="icon-target-heart">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="url(#gold-emblem-grad)" stroke-width="1.6" stroke-dasharray="4 2"/>
+        <path d="M12 17.2l-1.05-.95C7.15 12.8 5 10.85 5 8.4 5 6.4 6.55 4.85 8.55 4.85c1.12 0 2.2.52 2.9 1.35.7-.83 1.78-1.35 2.9-1.35 2 0 3.55 1.55 3.55 3.55 0 2.45-2.15 4.4-5.95 7.85L12 17.2z" fill="#FE2C55" stroke="#FFF3B0" stroke-width="0.8"/>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="goal-broadcast-frame">
+    <div class="goal-header-row">
+      <div class="goal-left">
+        <div class="emblem-crest">
+          <svg viewBox="0 0 24 24" width="22" height="22"><use href="#icon-target-heart"/></svg>
+        </div>
+        <div class="goal-title-stack">
+          <div class="goal-title" id="goal-title">CANLI YAYIM BƏYƏNİ HƏDƏFİ</div>
+          <div class="goal-sub">Mükafat Mərhələsi: <strong>100,000 Bəyəni • VIP Çəkiliş</strong></div>
+        </div>
+      </div>
+
+      <div class="goal-right">
+        <div class="goal-counter-box">
+          <div class="goal-numbers" id="goal-numbers">64,800 <span class="target">/ 100,000</span></div>
+        </div>
+        <div class="goal-pct-badge" id="goal-pct">64.8%</div>
+      </div>
+    </div>
+
+    <div class="goal-track-shell">
+      <div class="goal-bar-fill" id="goal-fill"></div>
+    </div>
+
+    <div class="milestones-row" id="milestones-row">
+      <div class="milestone-step reached" data-step="25">
+        <span>25,000</span>
+        <span class="m-status">TAMAMLANDI</span>
+      </div>
+      <div class="milestone-step reached" data-step="50">
+        <span>50,000</span>
+        <span class="m-status">TAMAMLANDI</span>
+      </div>
+      <div class="milestone-step" data-step="75">
+        <span>75,000</span>
+        <span class="m-status">NÖVBƏTİ</span>
+      </div>
+      <div class="milestone-step" data-step="100">
+        <span>100,000</span>
+        <span class="m-status">FİNAL</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('backdrop') === '1' || params.get('demo') === '1') {
+        document.body.classList.add('with-backdrop');
+      }
+
+      function updateGoal(state) {
+        if (!state) return;
+        const total = Number(state.totalLikes || 64800);
+        const target = Number((state.config && state.config.likeGoalTarget) || 100000);
+        const pct = Math.min(100, Number(((total / Math.max(1, target)) * 100).toFixed(1)));
+        document.getElementById('goal-numbers').innerHTML =
+          `${total.toLocaleString('en-US')} <span class="target">/ ${target.toLocaleString('en-US')}</span>`;
+        document.getElementById('goal-pct').textContent = pct + '%';
+        document.getElementById('goal-fill').style.width = pct + '%';
+        if (state.config && state.config.likeGoalTitle) {
+          document.getElementById('goal-title').textContent = state.config.likeGoalTitle;
+        }
+        document.querySelectorAll('.milestone-step').forEach((el) => {
+          const stepPct = Number(el.getAttribute('data-step'));
+          const reached = pct >= stepPct;
+          el.classList.toggle('reached', reached);
+          const statusEl = el.querySelector('.m-status');
+          if (statusEl) statusEl.textContent = reached ? 'TAMAMLANDI' : (stepPct === 100 ? 'FİNAL' : 'HƏDƏF');
+        });
+      }
+
+      TF.connect((d) => { try { updateGoal(d); } catch (_) {} }, { noLive: params.get('static') === '1' });
+    })();
+  </script>
+</body>
+</html>

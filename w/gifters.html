@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikFinity AZ — Hədiyyə Kürsüsü (TikTok Live VIP Qanadlı Kristal)</title>
+  <script src="tf-env.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="avatars.js"></script>
+  <script src="podium-fx.js"></script>
+  <style>
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-royal: 'Cinzel', 'Plus Jakarta Sans', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: #F8FAFC;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body.with-backdrop {
+      background:
+        radial-gradient(ellipse 55% 48% at 50% 42%, rgba(230, 179, 71, 0.16) 0%, rgba(56, 189, 248, 0.09) 45%, transparent 75%),
+        radial-gradient(ellipse 45% 40% at 22% 55%, rgba(148, 163, 184, 0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 40% at 78% 55%, rgba(217, 119, 54, 0.11) 0%, transparent 70%),
+        linear-gradient(180deg, #06060C 0%, #0A0B17 50%, #050509 100%);
+    }
+
+    .ambient-sparks {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 18% 28%, rgba(255, 232, 158, 0.55) 50%, transparent 100%),
+        radial-gradient(2px 2px at 48% 14%, rgba(255, 243, 176, 0.65) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 78% 24%, rgba(186, 230, 253, 0.50) 50%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body.with-backdrop .ambient-sparks {
+      display: block;
+    }
+
+    .winged-podium-stage {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 900px;
+      max-width: 98vw;
+      padding: 10px 12px;
+    }
+
+    .podium-trio {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .medallion-unit {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .medallion-unit.rank-1 {
+      z-index: 5;
+      margin: 0 -14px;
+      transform: translateY(-28px);
+    }
+
+    .medallion-unit.rank-2,
+    .medallion-unit.rank-3 {
+      z-index: 3;
+    }
+
+    .winged-frame-box {
+      position: relative;
+      aspect-ratio: 640 / 573;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rank-1 .winged-frame-box {
+      width: 344px;
+      /* GPU shader shadow enabled — no CSS drop-shadow blur */
+    }
+
+    .rank-2 .winged-frame-box {
+      width: 266px;
+      /* GPU shader shadow enabled — no CSS drop-shadow blur */
+    }
+
+    .rank-3 .winged-frame-box {
+      width: 266px;
+      /* GPU shader shadow enabled — no CSS drop-shadow blur */
+    }
+
+    .medallion-aura {
+      position: absolute;
+      left: 50%;
+      top: 54%;
+      transform: translate(-50%, -50%);
+      width: 62%;
+      height: 62%;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .rank-1 .medallion-aura {
+      background: radial-gradient(circle, rgba(230, 179, 71, 0.34) 0%, transparent 70%);
+    }
+    .rank-2 .medallion-aura {
+      background: radial-gradient(circle, rgba(203, 213, 225, 0.24) 0%, transparent 70%);
+    }
+    .rank-3 .medallion-aura {
+      background: radial-gradient(circle, rgba(217, 119, 54, 0.26) 0%, transparent 70%);
+    }
+
+    .portrait-slot {
+      position: absolute;
+      left: 50%;
+      top: 54.07%;
+      width: 45.4%;
+      aspect-ratio: 1 / 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 1;
+      background: #08090F;
+    }
+
+    .portrait-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.04) saturate(1.04);
+    }
+
+    .portrait-slot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      box-shadow:
+        inset 0 6px 14px rgba(0, 0, 0, 0.85),
+        inset 0 0 8px rgba(0, 0, 0, 0.75);
+      pointer-events: none;
+    }
+
+    .winged-frame-img {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .shield-rank-engraving {
+      position: absolute;
+      left: 50%;
+      top: 85.5%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      font-family: var(--font-royal);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .rank-1 .shield-rank-engraving {
+      font-size: 15px;
+      color: #2A1802;
+      text-shadow: 0 1px 0 rgba(255, 248, 214, 0.75);
+    }
+    .rank-2 .shield-rank-engraving {
+      font-size: 12px;
+      color: #1E293B;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    .rank-3 .shield-rank-engraving {
+      font-size: 12px;
+      color: #2C1204;
+      text-shadow: 0 1px 0 rgba(254, 215, 170, 0.7);
+    }
+
+        .crystal-capsule {
+      position: relative;
+      z-index: 6;
+      margin-top: -16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-width: 286px;
+      height: 76px;
+      padding: 0 44px 3px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      white-space: nowrap;
+      overflow: visible;
+    }
+
+    .rank-1 .crystal-capsule {
+      min-width: 336px;
+      height: 88px;
+      margin-top: -18px;
+      padding: 0 52px 3px;
+      background-image: url('assets/frames/nameplate_gold.png');
+    }
+
+    .rank-2 .crystal-capsule {
+      background-image: url('assets/frames/nameplate_silver.png');
+    }
+
+    .rank-3 .crystal-capsule {
+      background-image: url('assets/frames/nameplate_bronze.png');
+    }
+
+    .capsule-name {
+      font-family: var(--font-sans);
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      max-width: 155px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rank-1 .capsule-name {
+      font-size: 16px;
+      font-weight: 800;
+      max-width: 195px;
+      color: #FFF6D6;
+      text-shadow: 0 1px 8px rgba(230, 179, 71, 0.45);
+    }
+
+    .rank-2 .capsule-name {
+      color: #F1F5F9;
+      text-shadow: 0 1px 6px rgba(148, 163, 184, 0.35);
+    }
+
+    .rank-3 .capsule-name {
+      color: #FFEDD5;
+      text-shadow: 0 1px 6px rgba(217, 119, 54, 0.35);
+    }
+
+    .capsule-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .rank-1 .capsule-dot { background: #E6B347; }
+
+    .capsule-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+    }
+
+    .rank-1 .capsule-score {
+      font-size: 16px;
+      color: #FFF3B0;
+    }
+    .rank-2 .capsule-score { color: #F1F5F9; }
+    .rank-3 .capsule-score { color: #FFEDD5; }
+  </style>
+</head>
+<body>
+  <div class="ambient-sparks"></div>
+
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="diamond-facet" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#E0F2FE"/>
+        <stop offset="45%" stop-color="#38BDF8"/>
+        <stop offset="100%" stop-color="#0284C7"/>
+      </linearGradient>
+      <g id="icon-diamond-3d">
+        <polygon points="6,3 18,3 22,9 12,21 2,9" fill="url(#diamond-facet)" stroke="#E0F2FE" stroke-width="1.2" stroke-linejoin="round"/>
+        <polyline points="2,9 22,9" stroke="#E0F2FE" stroke-width="1"/>
+        <polyline points="6,3 9,9 12,21 15,9 18,3" fill="none" stroke="#BAE6FD" stroke-width="0.9"/>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="winged-podium-stage" id="winged-podium-stage">
+    <div class="podium-trio">
+      <div class="medallion-unit rank-2" id="slot-rank-2"></div>
+      <div class="medallion-unit rank-1" id="slot-rank-1"></div>
+      <div class="medallion-unit rank-3" id="slot-rank-3"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('backdrop') === '1' || params.get('demo') === '1' || params.get('preview') === '1') {
+        document.body.classList.add('with-backdrop');
+      }
+
+      const stageEl = document.getElementById('winged-podium-stage');
+      const slot1 = document.getElementById('slot-rank-1');
+      let fx = null;
+      let prevTop1Id = 'ferid.qasimov';
+      const slot2 = document.getElementById('slot-rank-2');
+      const slot3 = document.getElementById('slot-rank-3');
+
+      function formatCompactScore(n) {
+        const num = Number(n) || 0;
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toLocaleString('en-US');
+      }
+
+      function escapeHtml(s) {
+        return String(s || '').replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+      }
+
+      function cleanDisplayName(nick) {
+        return String(nick || '').replace(/_VIP$/i, '').replace(/_99$/i, '').replace(/_/g, ' ');
+      }
+
+      
+      function updateSlotDom(slotEl, item, rank) {
+        if (!slotEl.querySelector(".winged-frame-box")) {
+          slotEl.innerHTML = renderMedallion(item, rank);
+          return;
+        }
+        const defaults = [
+          { uniqueId: "orxan.aliyev", nickname: "Orxan Əliyev", likes: 24950, diamonds: 48500, avatarUrl: "assets/avatars/avatar1.jpg" },
+          { uniqueId: "kenan.m", nickname: "Kənan Məmmədov", likes: 15240, diamonds: 29100, avatarUrl: "assets/avatars/avatar2.jpg" },
+          { uniqueId: "aysel.h", nickname: "Aysel Həsənova", likes: 9410, diamonds: 16800, avatarUrl: "assets/avatars/avatar3.jpg" },
+        ];
+        const data = item || defaults[rank - 1];
+        const avatarSrc = TF.asset(data.avatarUrl || (window.TikFinityAvatars && window.TikFinityAvatars.getAvatar(data.uniqueId, rank - 1)));
+        const displayName = cleanDisplayName(data.nickname);
+        const val = typeof data.diamonds === "number" ? data.diamonds : data.likes;
+
+        const portraitImg = slotEl.querySelector(".portrait-slot img");
+        if (portraitImg && portraitImg.getAttribute("src") !== avatarSrc) {
+          portraitImg.setAttribute("src", avatarSrc);
+        }
+        const nameEl = slotEl.querySelector(".capsule-name");
+        if (nameEl) nameEl.textContent = displayName;
+        const scoreEl = slotEl.querySelector(".score-num") || slotEl.querySelector(".capsule-score span");
+        if (scoreEl) scoreEl.textContent = formatCompactScore(val);
+      }
+  
+      function renderMedallion(gifter, rank) {
+        const defaults = [
+          { uniqueId: 'ferid.qasimov', nickname: 'Fərid Qasımov', diamonds: 48500, avatarUrl: 'assets/avatars/avatar7.jpg' },
+          { uniqueId: 'leyla.aliyeva', nickname: 'Leyla Əliyeva', diamonds: 29100, avatarUrl: 'assets/avatars/avatar6.jpg' },
+          { uniqueId: 'reshad.h', nickname: 'Rəşad Hüseynov', diamonds: 16800, avatarUrl: 'assets/avatars/avatar4.jpg' },
+        ];
+        const item = gifter || defaults[rank - 1];
+        const avatarSrc = TF.asset(item.avatarUrl || (window.TikFinityAvatars && window.TikFinityAvatars.getAvatar(item.uniqueId, rank + 3)));
+        const frameSrc = rank === 1
+          ? 'assets/frames/frame_winged_gold.png'
+          : rank === 2
+          ? 'assets/frames/frame_winged_silver.png'
+          : 'assets/frames/frame_winged_bronze.png';
+
+        const displayName = cleanDisplayName(item.nickname);
+
+        return `
+          <div class="winged-frame-box">
+            <div class="medallion-aura"></div>
+            <div class="portrait-slot">
+              <img src="${escapeHtml(avatarSrc)}" alt="${escapeHtml(displayName)}" />
+            </div>
+            <img class="winged-frame-img" src="${frameSrc}" alt="Rank #${rank} Frame" />
+            <span class="shield-rank-engraving">#${rank}</span>
+          </div>
+          <div class="crystal-capsule">
+            <span class="capsule-name">${escapeHtml(displayName)}</span>
+            <span class="capsule-dot"></span>
+            <span class="capsule-score">
+              <span>${formatCompactScore(item.diamonds)}</span>
+              <svg viewBox="0 0 24 24" width="13" height="13"><use href="#icon-diamond-3d"/></svg>
+            </span>
+          </div>
+        `;
+      }
+
+      function renderState(state) {
+        if (!state) return;
+        const gLeaders = Array.isArray(state.gifterLeaders) ? state.gifterLeaders : [];
+        const newTop1Id = gLeaders[0] ? gLeaders[0].uniqueId : prevTop1Id;
+        const swapped = Boolean(prevTop1Id && newTop1Id && prevTop1Id !== newTop1Id);
+        prevTop1Id = newTop1Id;
+        updateSlotDom(slot1, gLeaders[0], 1);
+        updateSlotDom(slot2, gLeaders[1], 2);
+        updateSlotDom(slot3, gLeaders[2], 3);
+        if (fx) {
+          if (swapped) fx.triggerRankSwap();
+          else if (state.type === "alertEvent" && state.lastGiftEvent) {
+            fx.triggerBurst(state.lastGiftEvent.rank || 1, state.lastGiftEvent.addedDiamonds || 500);
+          }
+        }
+      }
+
+      renderState({
+        gifterLeaders: [
+          { rank: 1, uniqueId: 'ferid.qasimov', nickname: 'Fərid Qasımov', diamonds: 48500, avatarUrl: 'assets/avatars/avatar7.jpg' },
+          { rank: 2, uniqueId: 'leyla.aliyeva', nickname: 'Leyla Əliyeva', diamonds: 29100, avatarUrl: 'assets/avatars/avatar6.jpg' },
+          { rank: 3, uniqueId: 'reshad.h', nickname: 'Rəşad Hüseynov', diamonds: 16800, avatarUrl: 'assets/avatars/avatar4.jpg' },
+        ],
+      });
+
+      if (window.TikFinityPodiumFX) {
+        fx = window.TikFinityPodiumFX.createPodiumFX({ stageEl, mode: "gifters" });
+      }
+      TF.connect((d) => { try { renderState(d); } catch (_) {} }, { noLive: params.get('static') === '1', onState: (data) => { if (data && data.gifterLeaders) renderState(data); } });
+    })();
+  </script>
+</body>
+</html>

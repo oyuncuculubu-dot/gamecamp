@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikFinity AZ — Bəyəni Kürsüsü (60 FPS Canlı Animasiyalı VIP Kristal)</title>
+  <script src="tf-env.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="avatars.js"></script>
+  <script src="podium-fx.js"></script>
+  <style>
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-royal: 'Cinzel', 'Plus Jakarta Sans', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: #F8FAFC;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body.with-backdrop {
+      background:
+        radial-gradient(ellipse 55% 48% at 50% 42%, rgba(230, 179, 71, 0.16) 0%, rgba(139, 92, 246, 0.08) 45%, transparent 75%),
+        radial-gradient(ellipse 45% 40% at 22% 55%, rgba(148, 163, 184, 0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 40% at 78% 55%, rgba(217, 119, 54, 0.11) 0%, transparent 70%),
+        linear-gradient(180deg, #06060C 0%, #0B0A16 50%, #050509 100%);
+    }
+
+    .ambient-sparks {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 18% 28%, rgba(255, 232, 158, 0.55) 50%, transparent 100%),
+        radial-gradient(2px 2px at 48% 14%, rgba(255, 243, 176, 0.65) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 78% 24%, rgba(254, 215, 170, 0.50) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 32% 76%, rgba(226, 232, 240, 0.45) 50%, transparent 100%),
+        radial-gradient(2px 2px at 68% 74%, rgba(255, 232, 158, 0.45) 50%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body.with-backdrop .ambient-sparks {
+      display: block;
+    }
+
+    .winged-podium-stage {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 1400px;
+      flex-shrink: 0;
+      transform-origin: center center;
+      padding: 24px 12px 14px;
+    }
+
+    .podium-trio {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .medallion-unit {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      will-change: transform;
+    }
+
+    .medallion-unit.rank-1 {
+      z-index: 5;
+      margin: 0 -14px;
+      transform: translateY(-28px);
+    }
+
+    .medallion-unit.rank-2,
+    .medallion-unit.rank-3 {
+      z-index: 3;
+    }
+
+    .winged-frame-box {
+      position: relative;
+      aspect-ratio: 640 / 573;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rank-1 .winged-frame-box {
+      width: 344px;
+      /* GPU shader shadow enabled — no CSS drop-shadow blur */
+    }
+
+    .rank-2 .winged-frame-box {
+      width: 266px;
+      /* GPU shader shadow enabled — no CSS drop-shadow blur */
+    }
+
+    .rank-3 .winged-frame-box {
+      width: 266px;
+      /* GPU shader shadow enabled — no CSS drop-shadow blur */
+    }
+
+    .medallion-aura {
+      position: absolute;
+      left: 50%;
+      top: 54%;
+      transform: translate(-50%, -50%);
+      width: 62%;
+      height: 62%;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .rank-1 .medallion-aura {
+      background: radial-gradient(circle, rgba(230, 179, 71, 0.36) 0%, transparent 70%);
+    }
+    .rank-2 .medallion-aura {
+      background: radial-gradient(circle, rgba(203, 213, 225, 0.26) 0%, transparent 70%);
+    }
+    .rank-3 .medallion-aura {
+      background: radial-gradient(circle, rgba(217, 119, 54, 0.28) 0%, transparent 70%);
+    }
+
+    .portrait-slot {
+      position: absolute;
+      left: 50%;
+      top: 54.07%;
+      width: 45.4%;
+      aspect-ratio: 1 / 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 1;
+      background: #08090F;
+    }
+
+    .portrait-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: contrast(1.04) saturate(1.04);
+    }
+
+    .portrait-slot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      box-shadow:
+        inset 0 6px 14px rgba(0, 0, 0, 0.85),
+        inset 0 0 8px rgba(0, 0, 0, 0.75);
+      pointer-events: none;
+    }
+
+    .winged-frame-img {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .shield-rank-engraving {
+      position: absolute;
+      left: 50%;
+      top: 85.5%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      font-family: var(--font-royal);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .rank-1 .shield-rank-engraving {
+      font-size: 15px;
+      color: #2A1802;
+      text-shadow: 0 1px 0 rgba(255, 248, 214, 0.75);
+    }
+
+    .rank-2 .shield-rank-engraving {
+      font-size: 12px;
+      color: #1E293B;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .rank-3 .shield-rank-engraving {
+      font-size: 12px;
+      color: #2C1204;
+      text-shadow: 0 1px 0 rgba(254, 215, 170, 0.7);
+    }
+
+        .crystal-capsule {
+      position: relative;
+      z-index: 6;
+      margin-top: -16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-width: 286px;
+      height: 76px;
+      padding: 0 44px 3px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      white-space: nowrap;
+      overflow: visible;
+    }
+
+    .rank-1 .crystal-capsule {
+      min-width: 336px;
+      height: 88px;
+      margin-top: -18px;
+      padding: 0 52px 3px;
+      background-image: url('assets/frames/nameplate_gold.png');
+    }
+
+    .rank-2 .crystal-capsule {
+      background-image: url('assets/frames/nameplate_silver.png');
+    }
+
+    .rank-3 .crystal-capsule {
+      background-image: url('assets/frames/nameplate_bronze.png');
+    }
+
+    .capsule-name {
+      font-family: var(--font-sans);
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      max-width: 155px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rank-1 .capsule-name {
+      font-size: 16px;
+      font-weight: 800;
+      max-width: 195px;
+      color: #FFF6D6;
+      text-shadow: 0 1px 8px rgba(230, 179, 71, 0.45);
+    }
+
+    .rank-2 .capsule-name {
+      color: #F1F5F9;
+      text-shadow: 0 1px 6px rgba(148, 163, 184, 0.35);
+    }
+
+    .rank-3 .capsule-name {
+      color: #FFEDD5;
+      text-shadow: 0 1px 6px rgba(217, 119, 54, 0.35);
+    }
+
+    .capsule-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .rank-1 .capsule-dot { background: #E6B347; }
+
+    .capsule-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+    }
+
+    .rank-1 .capsule-score {
+      font-size: 16px;
+      color: #FFF3B0;
+    }
+    .rank-2 .capsule-score { color: #F1F5F9; }
+    .rank-3 .capsule-score { color: #FFEDD5; }
+
+    .runners-floating-row {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 8px;
+      z-index: 6;
+    }
+
+    .runners-floating-row.visible {
+      display: flex;
+    }
+
+    .capsule-name{font-size:19px!important;font-weight:800!important;max-width:230px!important;color:#fff!important;
+      text-shadow:0 0 2px #000,0 0 2px #000,0 2px 4px rgba(0,0,0,.95)!important;letter-spacing:.02em}
+    .rank-1 .capsule-name{font-size:22px!important;max-width:270px!important;color:#FFF3C4!important}
+    .capsule-score{font-size:17px!important;text-shadow:0 0 2px #000,0 2px 4px #000}
+    .rank-1 .capsule-score{font-size:20px!important}
+    .crystal-capsule{min-width:340px!important;height:88px!important;padding:0 50px 3px!important}
+    .rank-1 .crystal-capsule{min-width:400px!important;height:100px!important;padding:0 60px 3px!important}
+    .like-toast{position:absolute;left:50%;top:10px;transform:translate(-50%,-30px) scale(.9);opacity:0;z-index:20;
+      display:flex;align-items:center;gap:12px;padding:8px 22px 8px 8px;border-radius:40px;
+      background:linear-gradient(180deg,rgba(20,16,10,.92),rgba(8,6,4,.92));border:2px solid #E6B347;
+      box-shadow:0 6px 22px rgba(0,0,0,.6),0 0 18px rgba(230,179,71,.35);transition:all .35s cubic-bezier(.2,1.4,.4,1);white-space:nowrap}
+    .like-toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+    .like-toast img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #FFE39A}
+    .like-toast b{font-size:20px;color:#fff;text-shadow:0 2px 4px #000}
+    .like-toast span{font-size:16px;color:#FFB4C8;font-weight:700}
+
+    .crystal-capsule{min-width:400px!important;height:110px!important;padding:0 58px 2px!important;gap:12px!important}
+    .rank-1 .crystal-capsule{min-width:470px!important;height:126px!important;padding:0 66px 2px!important}
+    .capsule-ava{width:58px;height:58px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2.5px solid #CBD5E1;box-shadow:0 0 0 2px #000}
+    .rank-1 .capsule-ava{width:68px;height:68px;border-color:#FFD76A}
+    .rank-3 .capsule-ava{border-color:#E8A06A}
+    .capsule-text{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
+    .capsule-name{font-size:26px!important;max-width:250px!important;line-height:1.1!important}
+    .rank-1 .capsule-name{font-size:30px!important;max-width:290px!important}
+    .capsule-score{font-size:17px!important;margin-top:2px}
+    .rank-1 .capsule-score{font-size:19px!important}
+    .cap-heart{width:24px!important;height:24px!important;filter:drop-shadow(0 1px 2px #000)}
+    .rank-1 .cap-heart{width:28px!important;height:28px!important}
+
+    body:not(.layout-row) .winged-podium-stage{width:560px!important}
+    body:not(.layout-row) .podium-trio{flex-direction:column!important;align-items:flex-start!important;gap:6px!important}
+    body:not(.layout-row) .medallion-unit{flex-direction:row!important;align-items:center!important;transform:none}
+    body:not(.layout-row) .medallion-unit.rank-1{order:1;margin:0 0 -34px!important}
+    body:not(.layout-row) .medallion-unit.rank-2{order:2}
+    body:not(.layout-row) .medallion-unit.rank-3{order:3}
+    body:not(.layout-row) .winged-frame-box{width:170px!important}
+    body:not(.layout-row) .rank-1 .winged-frame-box{width:200px!important}
+    body:not(.layout-row) .crystal-capsule{margin-top:0!important;margin-left:-22px!important;min-width:360px!important;height:100px!important}
+    body:not(.layout-row) .rank-1 .crystal-capsule{min-width:380px!important;height:112px!important}
+
+    .capsule-trophy{display:none}
+    body:not(.layout-row) .winged-frame-box{display:none!important}
+    body:not(.layout-row) .medallion-unit.rank-1{margin:0!important;transform:none!important}
+    body:not(.layout-row) .podium-trio{gap:14px!important;align-items:stretch!important}
+    body:not(.layout-row) .winged-podium-stage{width:620px!important}
+    body:not(.layout-row) .crystal-capsule{
+      --m1:#F8E08E;--m2:#B8862B;--glow:rgba(230,179,71,.45);
+      background-image:none!important;margin:0!important;width:600px;min-width:0!important;height:112px!important;
+      justify-content:flex-start!important;padding:0 26px 0 14px!important;gap:16px!important;border-radius:22px!important;
+      background:linear-gradient(180deg,rgba(28,24,40,.94),rgba(10,9,16,.96)) padding-box,
+                 linear-gradient(135deg,var(--m1),var(--m2) 45%,var(--m1) 70%,var(--m2)) border-box!important;
+      border:3px solid transparent!important;
+      box-shadow:0 10px 28px rgba(0,0,0,.6),0 0 22px var(--glow),inset 0 1px 0 rgba(255,255,255,.12)!important}
+    body:not(.layout-row) .rank-1 .crystal-capsule{height:128px!important;width:620px}
+    body:not(.layout-row) .rank-2 .crystal-capsule{--m1:#F1F5F9;--m2:#7C8796;--glow:rgba(203,213,225,.3)}
+    body:not(.layout-row) .rank-3 .crystal-capsule{--m1:#F2B07A;--m2:#8A4A22;--glow:rgba(217,119,54,.35)}
+    body:not(.layout-row) .capsule-trophy{display:block;height:92px;width:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.7))}
+    body:not(.layout-row) .rank-1 .capsule-trophy{height:108px}
+    body:not(.layout-row) .capsule-ava{width:78px!important;height:78px!important;border-width:3px!important}
+    body:not(.layout-row) .rank-1 .capsule-ava{width:90px!important;height:90px!important}
+    body:not(.layout-row) .capsule-name{font-size:32px!important;max-width:330px!important}
+    body:not(.layout-row) .rank-1 .capsule-name{font-size:36px!important}
+    body:not(.layout-row) .capsule-score{font-size:22px!important}
+
+    .capsule-crown{display:none}
+    body:not(.layout-row) .podium-trio{gap:72px!important;padding-top:84px}
+    body:not(.layout-row) .crystal-capsule{background:none!important;border:none!important;box-shadow:none!important;
+      height:auto!important;width:auto!important;padding:0 0 0 6px!important;gap:20px!important;position:relative;overflow:visible!important}
+    body:not(.layout-row) .rank-1 .crystal-capsule{height:auto!important;width:auto}
+    body:not(.layout-row) .capsule-crown{display:block;position:absolute;left:14px;width:80px;top:-60px;z-index:3;
+      transform:none;filter:drop-shadow(0 0 1px rgba(0,0,0,.9)) drop-shadow(0 2px 4px rgba(0,0,0,.6)) drop-shadow(0 0 4px var(--glow));animation:none}
+    body:not(.layout-row) .rank-1 .capsule-crown{width:92px;left:16px;top:-74px}
+    @keyframes crownBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    body:not(.layout-row) .capsule-ava{width:96px!important;height:96px!important;border:4px solid transparent!important;
+      background:linear-gradient(#000,#000) padding-box,conic-gradient(from var(--a,0deg),var(--m1),var(--m2),var(--m1),var(--m2),var(--m1)) border-box;
+      box-shadow:0 0 0 2px rgba(0,0,0,.7),0 0 24px var(--glow)!important;animation:ringSpin 4s linear infinite}
+    body:not(.layout-row) .rank-1 .capsule-ava{width:112px!important;height:112px!important}
+    @property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+    @keyframes ringSpin{to{--a:360deg}}
+    body:not(.layout-row) .capsule-name{font-size:38px!important;max-width:420px!important;
+      text-shadow:0 0 3px #000,0 0 3px #000,0 0 6px #000,0 3px 8px rgba(0,0,0,.9)!important}
+    body:not(.layout-row) .rank-1 .capsule-name{font-size:44px!important;background:linear-gradient(180deg,#FFF6D0,#F2C14E 60%,#C8901F);
+      -webkit-background-clip:text;background-clip:text;color:transparent!important;filter:drop-shadow(0 0 2px #000) drop-shadow(0 3px 5px #000);text-shadow:none!important}
+    body:not(.layout-row) .capsule-score{font-size:24px!important;color:#fff!important;text-shadow:0 0 3px #000,0 2px 4px #000}
+    body:not(.layout-row) .cap-heart{width:28px!important;height:28px!important;animation:beat 1.2s ease-in-out infinite}
+    @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}}
+    body:not(.layout-row) .capsule-score{font-size:34px!important;gap:10px!important;margin-top:4px}
+    body:not(.layout-row) .rank-1 .capsule-score{font-size:38px!important}
+    body:not(.layout-row) .cap-heart{width:42px!important;height:42px!important}
+    body:not(.layout-row) .rank-1 .cap-heart{width:48px!important;height:48px!important}
+    body:not(.layout-row) .rank-2 .capsule-crown{top:-60px}
+    body:not(.layout-row) .rank-3 .capsule-crown{top:-50px;width:80px;left:14px}
+    .crown1-wrap{display:none}
+    body:not(.layout-row) .crown1-wrap{display:block;position:absolute;left:16px;top:-74px;width:92px;z-index:3;pointer-events:none;
+      transform-origin:50% 70%;will-change:transform;animation:crown1Float 3s ease-in-out infinite}
+    body:not(.layout-row) .crown1-wrap .capsule-crown{position:relative;left:0;top:0;width:100%;display:block;animation:none;
+      filter:drop-shadow(0 0 1px rgba(0,0,0,.9)) drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+    .crown1-glow{position:absolute;left:0;top:0;width:100%;filter:drop-shadow(0 0 10px rgba(255,220,120,1)) drop-shadow(0 0 4px rgba(255,200,80,.9));
+      opacity:.25;will-change:opacity;animation:crown1Glow 3s ease-in-out infinite}
+    .crown1-shine{position:absolute;inset:0;z-index:4;overflow:hidden;-webkit-mask:var(--crown-url) center/100% 100% no-repeat;mask:var(--crown-url) center/100% 100% no-repeat}
+    .crown1-shine::before{content:"";position:absolute;top:-30%;left:0;width:40%;height:170%;
+      background:linear-gradient(90deg,transparent,rgba(255,250,220,.45) 30%,#fff 50%,rgba(255,250,220,.45) 70%,transparent);
+      transform:translateX(-160%) rotate(20deg);will-change:transform;animation:crown1Shine 3s ease-in-out infinite}
+    body:not(.layout-row) .crown1-wrap .crown-spark{width:12px;height:12px}
+    @keyframes crown1Float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.06)}}
+    @keyframes crown1Glow{0%,100%{opacity:.2}50%{opacity:.85}}
+    @keyframes crown1Shine{0%,15%{transform:translateX(-160%) rotate(20deg)}60%,100%{transform:translateX(330%) rotate(20deg)}}
+    @keyframes crownGlow{0%,100%{filter:drop-shadow(0 0 1px #000) drop-shadow(0 0 4px rgba(255,215,106,.5))}50%{filter:drop-shadow(0 0 1px #000) drop-shadow(0 0 14px rgba(255,225,130,1)) brightness(1.18)}}
+    .crown-spark{display:none;position:absolute;width:10px;height:10px;pointer-events:none;z-index:4;
+      background:radial-gradient(circle,#fff 0 20%,rgba(255,240,180,.9) 30%,transparent 70%);
+      clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:spark 1.8s ease-in-out infinite;opacity:0}
+    @keyframes spark{0%,100%{opacity:0;transform:scale(.3) rotate(0)}40%{opacity:1;transform:scale(1.4) rotate(45deg)}70%{opacity:0;transform:scale(.4) rotate(90deg)}}
+    body:not(.layout-row) .crown-spark{display:block}
+    body:not(.layout-row) .rank-2 .capsule-ava,body:not(.layout-row) .rank-3 .capsule-ava{animation:none!important}
+
+    /* worn-crown overrides */
+    .ava-wrap{position:relative;display:inline-block;flex-shrink:0;line-height:0}
+    .crown-contact{display:none}
+    body:not(.layout-row) .crown-contact{display:block;position:absolute;inset:4px;border-radius:50%;overflow:hidden;pointer-events:none;z-index:2;
+      background:radial-gradient(ellipse 30% 7% at 50% 7%,rgba(0,0,0,.22),transparent 100%)}
+    body:not(.layout-row) .podium-trio{gap:56px!important;padding-top:50px}
+    body:not(.layout-row) .ava-wrap > .capsule-crown{left:50%!important;width:60px!important;top:auto!important;bottom:calc(100% - 10px);transform:translateX(-50%)!important}
+    body:not(.layout-row) .rank-1 .crown1-wrap{left:50%!important;width:70px!important;top:auto!important;bottom:calc(100% - 11px);margin-left:-35px;transform-origin:50% 100%!important}
+    body:not(.layout-row) .rank-1 .crown1-wrap{animation-name:crown1Wear!important}
+    @keyframes crown1Wear{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  </style>
+</head>
+<body>
+  <div class="ambient-sparks"></div>
+
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <radialGradient id="ruby-heart-grad" cx="35%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#FF8FA3"/>
+        <stop offset="45%" stop-color="#FE2C55"/>
+        <stop offset="100%" stop-color="#880D25"/>
+      </radialGradient>
+      <g id="icon-ruby-heart">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#ruby-heart-grad)" stroke="#FFD1DC" stroke-width="1"/>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="winged-podium-stage" id="winged-podium-stage">
+    <div class="podium-trio">
+      <div class="medallion-unit rank-2" id="slot-rank-2"></div>
+      <div class="medallion-unit rank-1" id="slot-rank-1"></div>
+      <div class="medallion-unit rank-3" id="slot-rank-3"></div>
+    </div>
+    <div class="runners-floating-row" id="runners-row"></div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('backdrop') === '1' || params.get('demo') === '1' || params.get('preview') === '1') {
+        document.body.classList.add('with-backdrop');
+      }
+
+      const crownOpt = /^[A-D]$/.test(params.get('crowns') || '') ? params.get('crowns') : '';
+      const crownBase = crownOpt ? 'assets/crowns/options/' + crownOpt + '/' : 'assets/crowns/';
+      const stageEl = document.getElementById('winged-podium-stage');
+      if (params.get('layout') === 'row') document.body.classList.add('layout-row');
+      const slot1 = document.getElementById('slot-rank-1');
+      const slot2 = document.getElementById('slot-rank-2');
+      const slot3 = document.getElementById('slot-rank-3');
+
+      function formatCompactScore(n) {
+        const num = Number(n) || 0;
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toLocaleString('en-US');
+      }
+
+      function escapeHtml(s) {
+        return String(s || '').replace(/[&<>"']/g, (c) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+      }
+
+      function cleanDisplayName(nick) {
+        return String(nick || '').replace(/_AZ$/i, '').replace(/_Gaming$/i, '').replace(/_/g, ' ');
+      }
+
+      
+      function updateSlotDom(slotEl, item, rank) {
+        if (!slotEl.querySelector(".winged-frame-box")) {
+          slotEl.innerHTML = renderMedallion(item, rank);
+          return;
+        }
+        const defaults = [
+          { uniqueId: "orxan.aliyev", nickname: "Orxan Əliyev", likes: 24950, diamonds: 48500, avatarUrl: "assets/avatars/avatar1.jpg" },
+          { uniqueId: "kenan.m", nickname: "Kənan Məmmədov", likes: 15240, diamonds: 29100, avatarUrl: "assets/avatars/avatar2.jpg" },
+          { uniqueId: "aysel.h", nickname: "Aysel Həsənova", likes: 9410, diamonds: 16800, avatarUrl: "assets/avatars/avatar3.jpg" },
+        ];
+        const data = item || defaults[rank - 1];
+        const avatarSrc = TF.asset(data.avatarUrl || (window.TikFinityAvatars && window.TikFinityAvatars.getAvatar(data.uniqueId, rank - 1)));
+        const displayName = cleanDisplayName(data.nickname);
+        const val = typeof data.diamonds === "number" ? data.diamonds : data.likes;
+
+        const portraitImg = slotEl.querySelector(".portrait-slot img");
+        if (portraitImg && portraitImg.getAttribute("src") !== avatarSrc) {
+          portraitImg.setAttribute("src", avatarSrc);
+        }
+        const capAva = slotEl.querySelector(".capsule-ava");
+        if (capAva && capAva.getAttribute("src") !== avatarSrc) capAva.setAttribute("src", avatarSrc);
+        const nameEl = slotEl.querySelector(".capsule-name");
+        if (nameEl) nameEl.textContent = displayName;
+        const scoreEl = slotEl.querySelector(".score-num") || slotEl.querySelector(".capsule-score span");
+        if (scoreEl) scoreEl.textContent = formatCompactScore(val);
+      }
+  
+      function renderMedallion(leader, rank) {
+        const defaults = [
+          { uniqueId: 'orxan.aliyev', nickname: 'Orxan Əliyev', likes: 24950, avatarUrl: 'assets/avatars/avatar1.jpg' },
+          { uniqueId: 'kenan.m', nickname: 'Kənan Məmmədov', likes: 15240, avatarUrl: 'assets/avatars/avatar2.jpg' },
+          { uniqueId: 'aysel.h', nickname: 'Aysel Həsənova', likes: 9410, avatarUrl: 'assets/avatars/avatar3.jpg' },
+        ];
+        const item = leader || defaults[rank - 1];
+        const avatarSrc = TF.asset(item.avatarUrl || (window.TikFinityAvatars && window.TikFinityAvatars.getAvatar(item.uniqueId, rank - 1)));
+        const frameSrc = rank === 1
+          ? 'assets/frames/frame_winged_gold.png'
+          : rank === 2
+          ? 'assets/frames/frame_winged_silver.png'
+          : 'assets/frames/frame_winged_bronze.png';
+
+        const displayName = cleanDisplayName(item.nickname);
+
+        return `
+          <div class="winged-frame-box">
+            <div class="medallion-aura"></div>
+            <div class="portrait-slot">
+              <img src="${escapeHtml(avatarSrc)}" alt="${escapeHtml(displayName)}" />
+            </div>
+            <img class="winged-frame-img" src="${frameSrc}" alt="Rank #${rank} Frame" />
+            <span class="shield-rank-engraving">#${rank}</span>
+          </div>
+          <div class="crystal-capsule">
+            <span class="ava-wrap"><img class="capsule-ava" src="${escapeHtml(avatarSrc)}" alt="" /><span class="crown-contact"></span>${rank===1?`<span class="crown1-wrap" style="--crown-url:url('${crownBase}crown_gold.png')"><img class="crown1-glow" src="${crownBase}crown_gold.png" alt="" /><img class="capsule-crown" src="${crownBase}crown_gold.png" alt="" /><span class="crown1-shine"></span><i class="crown-spark" style="left:2px;top:14px"></i><i class="crown-spark" style="left:41px;top:-8px;animation-delay:.6s"></i><i class="crown-spark" style="left:84px;top:18px;animation-delay:1.2s"></i><i class="crown-spark" style="left:41px;top:44px;animation-delay:.9s"></i></span>`:`<img class="capsule-crown" src="${crownBase}crown_${rank===2?'silver':'bronze'}.png" alt="" />`}</span>
+            <span class="capsule-text"><span class="capsule-name">${escapeHtml(displayName)}</span>
+            <span class="capsule-score">
+              <span class="score-num" data-rank="${rank}">${formatCompactScore(item.likes)}</span>
+              <svg class="cap-heart" viewBox="0 0 24 24" width="24" height="24"><use href="#icon-ruby-heart"/></svg>
+            </span></span>
+          </div>
+        `;
+      }
+
+      let toastEl=null,toastT=null;
+      function showToast(e){
+        if(!toastEl){toastEl=document.createElement('div');toastEl.className='like-toast';stageEl.appendChild(toastEl);}
+        const src=TF.asset(e.avatarUrl||(window.TikFinityAvatars&&window.TikFinityAvatars.getAvatar(e.uniqueId,0))||'');
+        toastEl.innerHTML='<img src="'+escapeHtml(src)+'" alt=""><b>'+escapeHtml(cleanDisplayName(e.nickname))+'</b><span>+'+(e.added||1)+' ❤️</span>';
+        toastEl.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('show'),2800);
+      }
+      let prevTop1Id = 'qara_qartal99';
+      let fx = null;
+
+      function renderState(state) {
+        if (!state) return;
+        const leaders = Array.isArray(state.leaders) ? state.leaders : [];
+        const newTop1Id = leaders[0] ? leaders[0].uniqueId : prevTop1Id;
+        const swapped = Boolean(prevTop1Id && newTop1Id && prevTop1Id !== newTop1Id);
+        prevTop1Id = newTop1Id;
+
+        updateSlotDom(slot1, leaders[0], 1);
+        updateSlotDom(slot2, leaders[1], 2);
+        updateSlotDom(slot3, leaders[2], 3);
+
+        if (fx) {
+          if (state.config) {
+            fx.updateSettings({
+              crystalShimmer: state.config.crystalShimmer !== false,
+              levitation3D: state.config.levitation3D !== false,
+              burstWaves: state.config.burstWaves !== false,
+              swapEffects: state.config.swapEffects !== false,
+            });
+          }
+          null;
+        }
+        if (fx) {
+          if (swapped || (state.lastLikeEvent && state.lastLikeEvent.rankSwapped)) {
+            fx.triggerRankSwap();
+          } else if (state.type === 'likeBurst' && state.lastLikeEvent) {
+            const targetRank = state.lastLikeEvent.rank || 1;
+            if (targetRank <= 3) {
+              fx.triggerBurst(targetRank, state.lastLikeEvent.added || 50);
+            }
+          }
+        }
+      }
+
+      const initialLeaders = [
+        { rank: 1, uniqueId: 'orxan.aliyev', nickname: 'Orxan Əliyev', likes: 24950, avatarUrl: 'assets/avatars/avatar1.jpg' },
+        { rank: 2, uniqueId: 'kenan.m', nickname: 'Kənan Məmmədov', likes: 15240, avatarUrl: 'assets/avatars/avatar2.jpg' },
+        { rank: 3, uniqueId: 'aysel.h', nickname: 'Aysel Həsənova', likes: 9410, avatarUrl: 'assets/avatars/avatar3.jpg' },
+      ];
+
+      renderState({ leaders: initialLeaders });
+
+      if (window.TikFinityPodiumFX) {
+        fx = window.TikFinityPodiumFX.createPodiumFX({
+          stageEl,
+          mode: 'likes',
+        });
+      }
+
+      // If opened with ?burst=1 (for high-DPI screenshot of live golden burst), fire an immediate burst
+      if (params.get('burst') === '1' && fx) {
+        fx.triggerBurst(1, 150, 0.2);
+        fx.triggerBurst(2, 50, 0.35);
+        fx.setDeterministicTime(0.62);
+      }
+
+      // Deterministic 5-second 60 FPS video choreography hook
+      let timelineInitialized = false;
+      let timelineSwappedDom = false;
+      window.__setSimTime = window.__stepDemoTimeline = function (tSec) {
+        if (!fx) return;
+        if (!timelineInitialized) {
+          timelineInitialized = true;
+          fx.clearBursts();
+          // Schedule metallic shader bursts across the 6.0s 60fps showcase
+          fx.triggerBurst(1, 250, 0.15);
+          fx.triggerBurst(2, 180, 1.15);
+          fx.triggerBurst(1, 500, 2.10);
+          fx.triggerRankSwap(3.35);
+          fx.triggerBurst(3, 150, 4.80);
+        }
+        if (tSec >= 3.35 && !timelineSwappedDom) {
+          timelineSwappedDom = true;
+          updateSlotDom(slot1, { uniqueId: "kenan.m", nickname: "Kənan Məmmədov", likes: 25600, avatarUrl: "assets/avatars/avatar2.jpg" }, 1);
+          updateSlotDom(slot2, { uniqueId: "orxan.aliyev", nickname: "Orxan Əliyev", likes: 25400, avatarUrl: "assets/avatars/avatar1.jpg" }, 2);
+        } else if (tSec < 3.35 && timelineSwappedDom) {
+          timelineSwappedDom = false;
+          updateSlotDom(slot1, { uniqueId: "orxan.aliyev", nickname: "Orxan Əliyev", likes: 24950, avatarUrl: "assets/avatars/avatar1.jpg" }, 1);
+          updateSlotDom(slot2, { uniqueId: "kenan.m", nickname: "Kənan Məmmədov", likes: 15240, avatarUrl: "assets/avatars/avatar2.jpg" }, 2);
+        }
+        fx.setDeterministicTime(tSec);
+      };
+
+      TF.connect((d) => { try { renderState(d); } catch (_) {} }, { noLive: params.get('static') === '1', onState: (data) => { if (data && data.leaders && params.get('burst') !== '1') renderState(data); } });
+    })();
+  </script>
+<script>
+(function(){function fit(){var el=document.querySelector('.winged-podium-stage');if(!el)return;el.style.transform='none';var w=el.offsetWidth,h=el.offsetHeight;var k=Math.min(innerWidth*0.96/w,innerHeight*0.96/h);el.style.transform='scale('+k+')';}
+addEventListener('resize',fit);addEventListener('load',fit);new MutationObserver(function(){requestAnimationFrame(fit)}).observe(document.body,{childList:true,subtree:true});setTimeout(fit,300);})();
+</script>
+</body>
+</html>

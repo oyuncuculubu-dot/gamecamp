@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikFinity AZ — Canlı Bildirişlər (Broadcast Alert Box v3.0)</title>
+  <script src="tf-env.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="avatars.js"></script>
+  <style>
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Chakra Petch', 'Plus Jakarta Sans', sans-serif;
+      --gold-light: #FFF3B0;
+      --gold-mid: #E6B347;
+      --crimson: #FE2C55;
+      --cyan: #38BDF8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    body.with-backdrop {
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 45%, rgba(230, 179, 71, 0.12) 0%, transparent 65%),
+        linear-gradient(180deg, #07080D 0%, #0A0C14 100%);
+    }
+
+    .alert-broadcast-card {
+      position: relative;
+      width: 680px;
+      max-width: 96vw;
+      padding: 18px 22px;
+      border-radius: 18px;
+      background:
+        radial-gradient(110% 100% at 0% 0%, rgba(230, 179, 71, 0.14) 0%, transparent 55%),
+        linear-gradient(180deg, rgba(16, 19, 28, 0.95) 0%, rgba(9, 11, 17, 0.98) 100%);
+      border: 1px solid rgba(230, 179, 71, 0.42);
+      box-shadow:
+        0 28px 65px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 243, 176, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .alert-broadcast-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #E6B347, #FFF3B0, #E6B347, transparent);
+    }
+
+    .alert-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .alert-portrait-ring {
+      position: relative;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      padding: 3.5px;
+      background: conic-gradient(from 180deg, #8A5A10, #E6B347, #FFF6C2, #C9932B, #8A5A10);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.75), 0 0 20px rgba(230, 179, 71, 0.28);
+      flex-shrink: 0;
+    }
+
+    .alert-bezel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 2.5px;
+      background: #080A10;
+      overflow: hidden;
+    }
+
+    .alert-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .alert-emblem-corner {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #090A0F;
+      border: 1.5px solid #E6B347;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.75);
+    }
+
+    .alert-content {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .alert-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .alert-type-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2.5px 8px;
+      border-radius: 5px;
+      background: rgba(230, 179, 71, 0.16);
+      border: 1px solid rgba(230, 179, 71, 0.45);
+      color: #FFF3B0;
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    .alert-time-tag {
+      font-family: var(--font-display);
+      font-size: 10px;
+      color: #64748B;
+      letter-spacing: 0.06em;
+    }
+
+    .alert-sender-line {
+      font-size: 17px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .alert-sender-line span.handle {
+      font-size: 13px;
+      font-weight: 500;
+      color: #94A3B8;
+      margin-left: 4px;
+    }
+
+    .alert-message {
+      font-size: 12.5px;
+      color: #CBD5E1;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Right Value Pill + Sound Equalizer Bars */
+    .alert-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .alert-reward-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: 9px;
+      background: linear-gradient(180deg, rgba(230, 179, 71, 0.24) 0%, rgba(15, 18, 28, 0.96) 100%);
+      border: 1px solid rgba(230, 179, 71, 0.58);
+      font-family: var(--font-display);
+      font-size: 13.5px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #FFF3B0;
+      letter-spacing: 0.04em;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.55);
+    }
+
+    .audio-wave-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-display);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #94A3B8;
+    }
+
+    .eq-bars {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 11px;
+    }
+
+    .eq-bars span {
+      width: 2.5px;
+      background: #E6B347;
+      border-radius: 1px;
+    }
+
+    .eq-bars span:nth-child(1) { height: 5px; }
+    .eq-bars span:nth-child(2) { height: 11px; }
+    .eq-bars span:nth-child(3) { height: 7px; }
+    .eq-bars span:nth-child(4) { height: 10px; }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <linearGradient id="diamond-facet" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#E0F2FE"/>
+        <stop offset="45%" stop-color="#38BDF8"/>
+        <stop offset="100%" stop-color="#0284C7"/>
+      </linearGradient>
+      <g id="icon-diamond-3d">
+        <polygon points="6,3 18,3 22,9 12,21 2,9" fill="url(#diamond-facet)" stroke="#E0F2FE" stroke-width="1.2" stroke-linejoin="round"/>
+        <polyline points="2,9 22,9" stroke="#E0F2FE" stroke-width="1"/>
+        <polyline points="6,3 9,9 12,21 15,9 18,3" fill="none" stroke="#BAE6FD" stroke-width="0.9"/>
+      </g>
+    </defs>
+  </svg>
+
+  <div class="alert-broadcast-card" id="alert-box">
+    <div class="alert-left">
+      <div class="alert-portrait-ring">
+        <div class="alert-bezel">
+          <img class="alert-avatar" id="alert-avatar" src="assets/avatars/avatar7.jpg" alt="Fərid Qasımov" />
+        </div>
+        <div class="alert-emblem-corner">
+          <svg viewBox="0 0 24 24" width="14" height="14"><use href="#icon-diamond-3d"/></svg>
+        </div>
+      </div>
+
+      <div class="alert-content">
+        <div class="alert-top-row">
+          <span class="alert-type-tag" id="alert-tag">VIP HƏDİYYƏ BİLDİRİŞİ</span>
+          <span class="alert-time-tag">CANLI YAYIM • İNDİ</span>
+        </div>
+        <div class="alert-sender-line" id="alert-user">
+          Fərid Qasımov <span class="handle">@ferid.qasimov</span>
+        </div>
+        <div class="alert-message" id="alert-msg">
+          "Şir Hədiyyəsi ×5" göndərərək #1 Hədiyyə Kürsüsünə yüksəldi
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-right">
+      <div class="alert-reward-pill">
+        <svg viewBox="0 0 24 24" width="15" height="15"><use href="#icon-diamond-3d"/></svg>
+        <span id="alert-badge-val">+5,000 BRİLYANT</span>
+      </div>
+      <div class="audio-wave-pill">
+        <div class="eq-bars"><span></span><span></span><span></span><span></span></div>
+        <span>SƏS SİQNALI AKTİV</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('backdrop') === '1' || params.get('demo') === '1') {
+        document.body.classList.add('with-backdrop');
+      }
+
+      const avEl = document.getElementById('alert-avatar');
+
+      function playAlertChime() {
+        try {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return;
+          const ctx = new AudioCtx();
+          const notes = [523.25, 659.25, 783.99, 1046.5];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.001, ctx.currentTime + idx * 0.09);
+            gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + idx * 0.09 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.09 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + idx * 0.09);
+            osc.stop(ctx.currentTime + idx * 0.09 + 0.36);
+          });
+        } catch (_) {}
+      }
+
+      function renderAlert(state, shouldChime) {
+        if (!state || !state.lastAlertEvent) return;
+        const ev = state.lastAlertEvent;
+        avEl.src = TF.asset(ev.avatarUrl || (window.TikFinityAvatars && window.TikFinityAvatars.getAvatar(ev.uniqueId, 6)));
+        document.getElementById('alert-tag').textContent =
+          ev.categoryLabel || (ev.type === 'follow' ? 'YENİ İZLƏYİCİ QOŞULDU' : 'VIP HƏDİYYƏ BİLDİRİŞİ');
+        document.getElementById('alert-user').innerHTML =
+          `${ev.nickname || 'Fərid Qasımov'} <span class="handle">${ev.handle || '@' + (ev.uniqueId || 'ferid.qasimov')}</span>`;
+        document.getElementById('alert-msg').textContent = ev.message || '';
+        document.getElementById('alert-badge-val').textContent =
+          ev.badgeText || (ev.diamonds ? `+${Number(ev.diamonds).toLocaleString('en-US')} BRİLYANT` : 'CANLI BİLDİRİŞ');
+        if (shouldChime) playAlertChime();
+      }
+
+      TF.connect((p) => { try { renderAlert(p, p.type === 'alertEvent'); } catch (_) {} }, { noLive: params.get('static') === '1', onState: (s) => renderAlert(s, false) });
+    })();
+  </script>
+</body>
+</html>
