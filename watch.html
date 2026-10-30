@@ -1,6 +1,6 @@
 <!doctype html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>İzlə · GameCamp</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="app.css"></head><body>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="gifts.css"></head><body>
 <header><div class="wrap"><a class="logo" href="index.html">Game<b>Camp</b></a>
 <nav class="sw" id="sw"></nav>
 <div class="r"><a class="btn g" href="#" id="b1"></a><a class="btn p" href="dashboard.html" id="b2"></a></div></div></header>
@@ -46,4 +46,4 @@ cin.onsubmit=e=>{e.preventDefault();const v=ci.value.trim();if(!v)return;const s
 gifts.querySelectorAll('.gf').forEach(b=>b.onclick=()=>add(`<div class="m gift">${i3(b.dataset.i,32)}<span><b style="color:var(--c)">Sən</b>${b.dataset.n} göndərdin</span></div>`));
 rh.innerHTML=i3('live',40)+'<h3>Oxşar yayınlar</h3>';
 rel.innerHTML=d.s.filter(s=>s[0]!=x[0]).sort((a,b)=>(b[3]==x[3])-(a[3]==x[3])).slice(0,4).map(s=>`<a class="card" href="watch.html?id=${s[0]}"><div class="th"><img src="assets/${s[0]}.jpg" alt=""><span class="live">CANLI</span><span class="pill">${ic('eye',14)}${fmt(s[4])}</span></div><div class="k">${s[3]}</div><div class="ti">${s[1]}</div><div class="sub">${s[2]}</div></a>`).join('');
-</script></body></html>
+</script><script src="gifts.js"></script></body></html>
