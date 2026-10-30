@@ -1,6 +1,6 @@
 <!doctype html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Yayıncı paneli · GameCamp</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dash.css"></head><body>
+<meta name="description" content="GameCamp yayıncı paneli: yayın başlığı, kateqoriya, açar və statistika."><meta name="theme-color" content="#000000"><meta property="og:site_name" content="GameCamp"><meta property="og:type" content="website"><meta property="og:title" content="GameCamp — canlı oyun və söhbət"><meta property="og:description" content="GameCamp yayıncı paneli: yayın başlığı, kateqoriya, açar və statistika."><meta property="og:image" content="assets/hero_game.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icons3d/live.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dash.css"><link rel="stylesheet" href="pro.css"></head><body>
 <header><div class="wrap"><a class="logo" href="index.html">Game<b>Camp</b></a><nav class="sw" id="sw"></nav>
 <div class="r"><a class="btn g" href="#" id="ua" data-auth></a><a class="btn g" href="index.html" id="b1"></a></div></div></header>
 <main class="wrap">
@@ -29,7 +29,7 @@ function R(){const d=D[W],g=W=='game';document.body.className=W;if(!d.cats.inclu
 sw.innerHTML=`<a href="#game" data-x="game" class="${g?'on':''}">${ic('gamepad')}Oyun</a><a href="#talk" data-x="talk" class="${g?'':'on'}">${ic('mic')}Söhbət</a>`;
 sw.querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();W=a.dataset.x;S.W=W;save();history.replaceState(0,'','#'+W);R()});
 b1.innerHTML=ic('back',16)+'Ana səhifə';dk.innerHTML=i3('live',28)+'Studiya · '+d.name;
-stats.innerHTML=[['eye','Canlı izləyici',live?'312':'0','+18% keçən həftəyə'],['calendar','İzləmə vaxtı (30 gün)','1 284 saat','+9%'],['star','Yeni izləyicilər (30 gün)','486','+27%']].map(s=>`<div class="pn s4 sc3">${i3(s[0],64)}<small>${s[1]}</small><b>${s[2]}</b><span class="up">${ic('up',14)}${s[3]}</span></div>`).join('');
+stats.innerHTML=[['eye','Canlı izləyici',live?'312':'0','+18% keçən həftəyə'],['clock','İzləmə vaxtı (30 gün)','1 284 saat','+9%'],['person','Yeni izləyicilər (30 gün)','486','+27%']].map(s=>`<div class="pn s4 sc3">${i3(s[0],64)}<small>${s[1]}</small><b>${s[2]}</b><span class="up">${ic('up',14)}${s[3]}</span></div>`).join('');
 h1.innerHTML=i3(g?'cs2':'mic',40)+'Yayın məlumatı';h2.innerHTML=i3('block',40)+'Önizləmə və açar';h3.innerHTML=i3('trophy',40)+'Son yayınlar';
 if(ti.dataset.w!=W){ti.value=S.title[W]||(g?'Premier rank — gecə sessiyası':'Gecə söhbəti: günün mövzuları');ti.dataset.w=W}tic.textContent=ti.value.length+'/80';sv.innerHTML=ic('check',18)+'Yadda saxla';c2.innerHTML=ic('copy',18);
 seg.innerHTML=`<button class="${g?'on':''}" data-x="game">${i3('cs2',48)}Oyun</button><button class="${g?'':'on'}" data-x="talk">${i3('mic',48)}Söhbət</button>`;
@@ -51,4 +51,4 @@ kr.onclick=()=>{if(!confirm('Yeni açar yaradılsın? Köhnə açar işləməyə
 ti.oninput=()=>{tic.textContent=ti.value.length+'/80'};
 sv.onclick=()=>{if(!ti.value.trim())return GC.toast('Yayın başlığı boş ola bilməz'),ti.focus();persist();svn.textContent='Yadda saxlanıldı: '+new Date().toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'});GC.toast('Ayarlar yadda saxlanıldı')};
 R();
-</script></body></html>
+</script><script src="pro.js"></script></body></html>

@@ -6,7 +6,7 @@ async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncod
 const salt=()=>[...crypto.getRandomValues(new Uint8Array(16))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const users=()=>LS.get('gc_users',{});
 const user=()=>{const u=LS.get('gc_session',null);return u&&users()[u.toLowerCase()]?users()[u.toLowerCase()]:null};
-let tt;function toast(m){let t=document.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.append(t)}t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
+let tt;function toast(m){let t=document.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.append(t)}t.textContent=m;t.classList.toggle('err',/yanlış|kifayət|boş ola|dəstəklənmir|olmalı|xəta/i.test(m));t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
 async function copy(txt,msg){try{await navigator.clipboard.writeText(txt)}catch(e){const a=document.createElement('textarea');a.value=txt;a.style.position='fixed';a.style.opacity=0;document.body.append(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}toast(msg||'Kopyalandı')}
 // modal
 const sc=document.createElement('div');sc.className='mscrim';sc.innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mh">

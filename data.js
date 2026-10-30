@@ -28,7 +28,7 @@ Object.assign(IC,{'heart': '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0
 'layout': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/>'});
 const ic=(n,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none">${IC[n]}</svg>`;
 const CI={'Hamısı':'grid','GTA/RP':'car','CS2':'cs2','PUBG':'helmet','Minecraft':'block','Mobil':'phone','Gündəlik':'cup','Musiqi':'headphones','Podkast':'mic','Sual-Cavab':'bubble','İdman':'ball'};
-const TH=['grid','star','calendar','bell','eye','s_video','s_camera','s_music','s_game','s_chat'];
+const TH=['clock','person','gift','grid','star','calendar','bell','eye','s_video','s_camera','s_music','s_game','s_chat'];
 const i3=(n,s=24,c='')=>`<img class="i3 ${c}" src="icons3d/${n}${W=='talk'&&TH.includes(n)?'_a':''}.png" width="${s}" height="${s}" alt="">`;
 const fmt=n=>n>=1000?(n/1000).toFixed(1)+'K':n;
 let W=location.hash=='#talk'?'talk':'game',C='Hamısı';const $=id=>document.getElementById(id);
@@ -36,4 +36,4 @@ function boot(render){document.querySelectorAll('[data-w]').forEach(b=>b.onclick
 function go(){document.body.className=W;document.querySelectorAll('[data-w]').forEach(b=>b.classList.toggle('on',b.dataset.w==W));render(D[W]);chips();if(window.after)after(D[W])}
 window.chips=function(){const d=D[W];$('chips').innerHTML=d.cats.map(c=>`<button class="chip${c==C?' on':''}" data-c="${c}">${i3(CI[c],24)}${c}<small>${c=='Hamısı'?d.s.length:d.s.filter(x=>x[3]==c).length}</small></button>`).join('');
 $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{C=b.dataset.c;chips()});const Q=(window.SQ||'').trim().toLocaleLowerCase('az');const L=d.s.filter(x=>(C=='Hamısı'||x[3]==C)&&(!Q||(x[1]+' '+x[2]+' '+x[3]).toLocaleLowerCase('az').includes(Q)));$('cnt').textContent=L.length+' canlı yayın';
-$('grid').innerHTML=L.length?L.map(card).join(''):(Q?'<div class="empty">"'+Q.replace(/[<>&"]/g,'')+'" üzrə yayın tapılmadı</div>':'<div class="empty">Bu kateqoriyada hazırda canlı yayın yoxdur</div>')};go()}
+$('grid').innerHTML=L.length?L.map(card).join(''):(Q?'<div class="empty">'+i3('eye',72)+'<b>Heç nə tapılmadı</b><span>"'+Q.replace(/[<>&"]/g,'')+'" üzrə yayın yoxdur. Başqa söz və ya kateqoriya yoxla.</span></div>':'<div class="empty">'+i3('calendar',72)+'<b>Hazırda efir yoxdur</b><span>Bu kateqoriyada canlı yayın başlayanda burada görünəcək.</span></div>')};go()}
