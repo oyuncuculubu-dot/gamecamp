@@ -1,5 +1,5 @@
 (()=>{
-const GL=[['rose','Gül',1,'255,70,90'],['heart','Ürək',5,'83,252,24'],['box','Sürpriz',10,'120,230,60'],['pad','Qızıl pult',50,'255,200,60'],['gem','Almaz',100,'90,190,255'],['rocket','Raket',500,'140,255,90'],['crown','Tac',1000,'255,196,40'],['lion','Şir',5000,'255,170,30']];
+const GL=[['rose','Gül',1,'255,70,90'],['heart','Ürək',5,'83,252,24'],['box','Sürpriz',10,'120,230,60'],['pad','Qızıl pult',50,'255,200,60'],['gem','Almaz',100,'90,190,255'],['rocket','Uçan Qala',500,'140,255,90'],['crown','Tac',1000,'255,196,40'],['lion','Şir',5000,'255,170,30']];
 const ICN=n=>`icons3d/gift_${n}.png`,coin=s=>`<img src="${ICN('coin')}" width="${s}" height="${s}" alt="">`;
 const nf=n=>n.toLocaleString('az-AZ').replace(/,/g,' ');
 const BK=()=>GC.ukey('coins');const getBal=()=>GC.user()?GC.LS.get(BK(),1000):0;let bal=getBal(),sel=4,combo=0,ct=null;
@@ -131,7 +131,7 @@ lion(s){const z=s.z*1.1,x0=s.x,y0=s.y,ry=s.add(layer('rays gold')),e=s.add(spr('
   if(t>.85&&!r1){r1=1;roar(x0,y0)}if(t>2.1&&!r2){r2=1;roar(x0,y0)}
   if(t>1&&t<4&&Math.random()<.7){const a=R(0,6.28);emit({k:'dot',x:x0+Math.cos(a)*z*.45,y:y0+Math.sin(a)*z*.45,vx:Math.cos(a)*R(.5,2),vy:Math.sin(a)*R(.5,2)-.6,r:R(1.5,3),c:Math.random()<.5?'255,200,80':'255,150,40',d:.02})}}}
 };
-const DUR={rose:1.9,heart:2.3,box:2.4,pad:2.2,gem:4,rocket:4,crown:4,lion:4.5};
+const DUR={rose:1.9,heart:2.3,box:2.4,pad:2.2,gem:4,rocket:5,crown:4,lion:4.5};
 function scene(g,big){fit();const n=g[0],m=Math.min(W,H),s={t0:performance.now(),d:DUR[n],els:[],add(e){this.els.push(e);return e},
  z:big?m*(mob()?.5:.46):m*(mob()?.3:.26),x:big?W/2:W*(mob()?.22:.16),y:big?H*.44:H*(mob()?.62:.66)};
  if(!big){const sm=SC.filter(q=>!q.big);if(sm.length>=4){const o=sm[0];o.done=1;o.els.forEach(e=>e.remove())}s.x+=R(-8,8)}
