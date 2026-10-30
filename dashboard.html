@@ -1,6 +1,6 @@
 <!doctype html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Yayıncı paneli · GameCamp</title>
 <meta name="description" content="GameCamp yayıncı paneli: yayın başlığı, kateqoriya, açar və statistika."><meta name="theme-color" content="#000000"><meta property="og:site_name" content="GameCamp"><meta property="og:type" content="website"><meta property="og:title" content="GameCamp — canlı oyun və söhbət"><meta property="og:description" content="GameCamp yayıncı paneli: yayın başlığı, kateqoriya, açar və statistika."><meta property="og:image" content="assets/hero_game.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icons3d/live.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dash.css"><link rel="stylesheet" href="pro.css"></head><body>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dash.css"><link rel="stylesheet" href="pro.css"><link rel="stylesheet" href="games.css"></head><body>
 <header><div class="wrap"><a class="logo" href="index.html">Game<b>Camp</b></a><nav class="sw" id="sw"></nav>
 <div class="r"><a class="btn g" href="#" id="ua" data-auth></a><a class="btn g" href="index.html" id="b1"></a></div></div></header>
 <main class="wrap">
@@ -34,9 +34,9 @@ h1.innerHTML=i3(g?'cs2':'mic',40)+'Yayın məlumatı';h2.innerHTML=i3('block',40
 if(ti.dataset.w!=W){ti.value=S.title[W]||(g?'Premier rank — gecə sessiyası':'Gecə söhbəti: günün mövzuları');ti.dataset.w=W}tic.textContent=ti.value.length+'/80';sv.innerHTML=ic('check',18)+'Yadda saxla';c2.innerHTML=ic('copy',18);
 seg.innerHTML=`<button class="${g?'on':''}" data-x="game">${i3('cs2',48)}Oyun</button><button class="${g?'':'on'}" data-x="talk">${i3('mic',48)}Söhbət</button>`;
 seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{W=b.dataset.x;S.W=W;save();history.replaceState(0,'','#'+W);R()});
-subs.innerHTML=d.cats.slice(1).map(c=>`<button class="chip${c==cat?' on':''}" data-c="${c}">${i3(CI[c],24)}${c}</button>`).join('');
+subs.innerHTML=d.cats.slice(1).map(c=>`<button class="chip${c==cat?' on':''}" data-c="${c}">${gi(c,24)}${c}</button>`).join('');
 subs.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{cat=b.dataset.c;S.cat=cat;save();R()});
-const im=d.s.find(s=>s[3]==cat)[0];
+const im=(d.s.find(s=>s[3]==cat)||d.s[0])[0];
 prev.innerHTML=`<img src="assets/${im}.jpg" alt="">`+(live?`<span class="live">CANLI</span>`:`<div class="off">Önizləmə · siqnal gözlənilir</div>`);
 go.className='btn p golive'+(live?' end':'');go.innerHTML=live?ic('pause',18)+'Yayını bitir':ic('radio',18)+'Efirə çıx';
 st.classList.toggle('on',live);stt.textContent=live?'Efirdəsən · '+dur():'Efirdə deyil';pv.innerHTML=ic('eye',14)+'Bax';pv.href='watch.html?id='+im;

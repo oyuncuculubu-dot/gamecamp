@@ -1,5 +1,5 @@
 const D={game:{name:'Oyun',hero:'assets/hero_game.jpg',h:'oyun',
-cats:['Hamısı','GTA/RP','CS2','PUBG','Minecraft','Mobil'],
+cats:['Hamısı','GTA/RP','CS2','PUBG','Minecraft','Mobil','Valorant','Fortnite','League of Legends','Dota 2','EA FC','Warzone','Free Fire','RedM'],
 s:[['g2','Faceit 10-cu səviyyə matçları','BakuSniper','CS2',820],['g1','Bakı RP: gecə şəhər həyatı','RashidPlays','GTA/RP',540],['g5','PUBG Mobile turniri seçmələri','MobilAz','Mobil',410],['g7','Polis təqibi — RP server','Tural RP','GTA/RP',380],['g4','Sağ qalma rejimi: 100 gün','BlokUsta','Minecraft',320],['g3','Solo squad — top 1 hədəfi','NigarGG','PUBG',290],['g6','Premier rank — gecə sessiyası','Elvin_CS','CS2',260],['g8','Anbar xəritəsində taktika','Kamil5','CS2',150]],
 feat:{id:'g6',img:'hero_game',t:'Rank yolu: Global Elite',who:'GameCamp',cat:'CS2',v:'1.2K',m:'Azərbaycan dili · 3 saatdır yayında'},
 neu:[['Aqil','Minecraft','120 izləyici'],['Sevinc','Mobil','95 izləyici'],['Fərid','CS2','80 izləyici'],['Ramil','PUBG','64 izləyici']],
@@ -28,12 +28,14 @@ Object.assign(IC,{'heart': '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0
 'layout': '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/>'});
 const ic=(n,s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none">${IC[n]}</svg>`;
 const CI={'Hamısı':'grid','GTA/RP':'car','CS2':'cs2','PUBG':'helmet','Minecraft':'block','Mobil':'phone','Gündəlik':'cup','Musiqi':'headphones','Podkast':'mic','Sual-Cavab':'bubble','İdman':'ball'};
+const GI={'GTA/RP':['gta','Grand Theft Auto V'],'CS2':['cs2','Counter-Strike 2'],'PUBG':['pubg','PUBG: Battlegrounds'],'Minecraft':['minecraft','Minecraft'],'Mobil':['pubgm','PUBG Mobile'],'Valorant':['valorant','VALORANT'],'Fortnite':['fortnite','Fortnite'],'League of Legends':['lol','League of Legends'],'Dota 2':['dota2','Dota 2'],'EA FC':['eafc','EA Sports FC'],'Warzone':['warzone','Call of Duty: Warzone'],'Free Fire':['freefire','Garena Free Fire'],'RedM':['rdr2','Red Dead Redemption 2']};
+const gi=(c,s=24,cl='')=>GI[c]?`<img class="gmi ${cl}" src="assets/games/${GI[c][0]}_i.webp" width="${s}" height="${s}" alt="${GI[c][1]}">`:i3(CI[c],s,cl);
 const TH=['clock','person','gift','grid','star','calendar','bell','eye','s_video','s_camera','s_music','s_game','s_chat'];
 const i3=(n,s=24,c='')=>`<img class="i3 ${c}" src="icons3d/${n}${W=='talk'&&TH.includes(n)?'_a':''}.png" width="${s}" height="${s}" alt="">`;
 const fmt=n=>n>=1000?(n/1000).toFixed(1)+'K':n;
 let W=location.hash=='#talk'?'talk':'game',C='Hamısı';const $=id=>document.getElementById(id);
 function boot(render){document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{W=b.dataset.w;C='Hamısı';history.replaceState(0,'','#'+W);go()});
 function go(){document.body.className=W;document.querySelectorAll('[data-w]').forEach(b=>b.classList.toggle('on',b.dataset.w==W));render(D[W]);chips();if(window.after)after(D[W])}
-window.chips=function(){const d=D[W];$('chips').innerHTML=d.cats.map(c=>`<button class="chip${c==C?' on':''}" data-c="${c}">${i3(CI[c],24)}${c}<small>${c=='Hamısı'?d.s.length:d.s.filter(x=>x[3]==c).length}</small></button>`).join('');
+window.chips=function(){const d=D[W];$('chips').innerHTML=d.cats.map(c=>`<button class="chip${c==C?' on':''}" data-c="${c}">${gi(c,24)}${c}<small>${c=='Hamısı'?d.s.length:d.s.filter(x=>x[3]==c).length}</small></button>`).join('');
 $('chips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{C=b.dataset.c;chips()});const Q=(window.SQ||'').trim().toLocaleLowerCase('az');const L=d.s.filter(x=>(C=='Hamısı'||x[3]==C)&&(!Q||(x[1]+' '+x[2]+' '+x[3]).toLocaleLowerCase('az').includes(Q)));$('cnt').textContent=L.length+' canlı yayın';
 $('grid').innerHTML=L.length?L.map(card).join(''):(Q?'<div class="empty">'+i3('eye',72)+'<b>Heç nə tapılmadı</b><span>"'+Q.replace(/[<>&"]/g,'')+'" üzrə yayın yoxdur. Başqa söz və ya kateqoriya yoxla.</span></div>':'<div class="empty">'+i3('calendar',72)+'<b>Hazırda efir yoxdur</b><span>Bu kateqoriyada canlı yayın başlayanda burada görünəcək.</span></div>')};go()}
