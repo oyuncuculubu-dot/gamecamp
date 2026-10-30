@@ -90,6 +90,7 @@
 .gvid video{position:absolute;left:50%;top:50%;height:112%;width:auto;max-width:none;transform:translate(-50%,-50%);opacity:0;transition:opacity .25s;z-index:4}
 .gvid video.on{opacity:1}
 .gvid video.scr{mix-blend-mode:screen}
+.gvid video{background:transparent;box-shadow:none;border:0;outline:0}
 .gxb,.gxcnt{z-index:2}
 @media(max-width:700px){.gvid video{height:122%}}
 @media(prefers-reduced-motion:reduce){.gvid{display:none}}
