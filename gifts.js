@@ -197,7 +197,7 @@ function laneAdd(u,g,k){const key=u+g[0];let e=LN[key];
 const CM={};
 function chatAdd(u,g,k){const key=u+g[0];if(CM[key]&&CM[key].isConnected&&k>1){CM[key].querySelector('.x').textContent='x'+k;return}
  const d=document.createElement('div');d.className='m gft';d.innerHTML=`<img src="${ICN(g[0])}" alt=""><span class="t"><b>${u}</b>${g[1]} göndərdi</span><span class="x">x${k}</span>`;msgs.append(d);msgs.scrollTop=1e5;CM[key]=d}
-function fire(u,i,k){const g=GL[i];laneAdd(u,g,k);chatAdd(u,g,k);if(g[2]>=100||(VF[g[0]]&&vel(g[0])))showBig(u,g,k);else scene(g,0)}
+function fire(u,i,k){const g=GL[i];laneAdd(u,g,k);chatAdd(u,g,k);if(g[2]<=10)return;if(g[2]>=100||(VF[g[0]]&&vel(g[0])))showBig(u,g,k);else scene(g,0)}
 window.GiftDemo={fire,open,GL,scene,video:()=>curV&&{src:curV.currentSrc,mode:cvMode,on:gCv.classList.contains('on'),t:curV.currentTime}};
 // auto demo
 const U=['Kamal','Aysu','RəşadPro','Nigar','Toğrul','Leyla','Orxan'];
