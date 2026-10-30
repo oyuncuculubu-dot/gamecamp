@@ -1,0 +1,43 @@
+<!doctype html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Yayıncı paneli · GameCamp</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dash.css"></head><body>
+<header><div class="wrap"><a class="logo" href="index.html">Game<b>Camp</b></a><nav class="sw" id="sw"></nav>
+<div class="r"><a class="btn g" href="index.html" id="b1"></a></div></div></header>
+<main class="wrap">
+<div class="dh"><div><div class="kick" id="dk"></div><h1>Yayıncı paneli</h1></div><div class="st" id="st"><span class="dot"></span><span id="stt">Efirdə deyil</span><a class="btn g" href="#" id="pv" style="height:32px"></a></div></div>
+<div class="dg">
+<div class="sc3w" id="stats"></div>
+<section class="pn s7"><h3 id="h1"></h3>
+<label for="ti">Yayın başlığı</label><input class="inp" id="ti" maxlength="80">
+<label>Bölmə</label><div class="seg" id="seg"></div>
+<label>Alt kateqoriya</label><div class="subs" id="subs"></div>
+<button class="btn p golive" id="go"></button></section>
+<section class="pn s5"><h3 id="h2"></h3><div class="prev" id="prev"></div>
+<label>Server ünvanı</label><div class="fld"><div class="inp mono" style="letter-spacing:0">rtmp://ingest.gamecamp.az/live</div><button class="ib" aria-label="Kopyala" id="c1"></button></div>
+<label>Yayın açarı</label><div class="fld"><div class="inp mono" id="key"></div><button class="ib" aria-label="Göstər" id="kv"></button><button class="ib" aria-label="Yenilə" id="kr"></button></div>
+<p class="note">Nümunə açardır. Həqiqi açarı heç kimlə paylaşma.</p></section>
+<section class="pn s12"><h3 id="h3"></h3><div class="tw"><table><thead><tr><th>Yayın</th><th>Tarix</th><th>Müddət</th><th>Pik izləyici</th><th>Orta</th><th>Yeni izləyicilər</th></tr></thead><tbody id="tb"></tbody></table></div></section>
+</div></main>
+<footer style="margin-top:64px"><div class="wrap"><div class="fl"><span>© 2026 GameCamp. Yayıncı paneli.</span><nav><a href="#">Yayıncı qaydaları</a><a href="#">Dəstək</a></nav></div></div></footer>
+<script src="data.js"></script><script>
+let live=false,show=false,cat=null;W=location.hash=='#talk'?'talk':'game';
+const MASK='••••••••••••••••••••',DEMO='gc_live_nümunə_0000_0000';
+function R(){const d=D[W],g=W=='game';document.body.className=W;if(!d.cats.includes(cat)||cat=='Hamısı')cat=d.cats[1];
+sw.innerHTML=`<a href="#game" data-x="game" class="${g?'on':''}">${ic('gamepad')}Oyun</a><a href="#talk" data-x="talk" class="${g?'':'on'}">${ic('mic')}Söhbət</a>`;
+sw.querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();W=a.dataset.x;history.replaceState(0,'','#'+W);R()});
+b1.innerHTML=ic('back',16)+'Ana səhifə';dk.innerHTML=i3('live',28)+'Studiya · '+d.name;
+stats.innerHTML=[['eye','Canlı izləyici',live?'312':'0','+18% keçən həftəyə'],['calendar','İzləmə vaxtı (30 gün)','1 284 saat','+9%'],['star','Yeni izləyicilər (30 gün)','486','+27%']].map(s=>`<div class="pn s4 sc3">${i3(s[0],64)}<small>${s[1]}</small><b>${s[2]}</b><span class="up">${ic('up',14)}${s[3]}</span></div>`).join('');
+h1.innerHTML=i3(g?'cs2':'mic',40)+'Yayın məlumatı';h2.innerHTML=i3('block',40)+'Önizləmə və açar';h3.innerHTML=i3('trophy',40)+'Son yayınlar';
+if(!ti.value||ti.dataset.w!=W){ti.value=g?'Premier rank — gecə sessiyası':'Gecə söhbəti: günün mövzuları';ti.dataset.w=W}
+seg.innerHTML=`<button class="${g?'on':''}" data-x="game">${i3('cs2',48)}Oyun</button><button class="${g?'':'on'}" data-x="talk">${i3('mic',48)}Söhbət</button>`;
+seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{W=b.dataset.x;history.replaceState(0,'','#'+W);R()});
+subs.innerHTML=d.cats.slice(1).map(c=>`<button class="chip${c==cat?' on':''}" data-c="${c}">${i3(CI[c],24)}${c}</button>`).join('');
+subs.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{cat=b.dataset.c;R()});
+const im=d.s.find(s=>s[3]==cat)[0];
+prev.innerHTML=`<img src="assets/${im}.jpg" alt="">`+(live?`<span class="live">CANLI</span>`:`<div class="off">Önizləmə · siqnal gözlənilir</div>`);
+go.className='btn p golive'+(live?' end':'');go.innerHTML=live?ic('pause',18)+'Yayını bitir':ic('radio',18)+'Efirə çıx';
+st.classList.toggle('on',live);stt.textContent=live?'Efirdəsən · 00:12:48':'Efirdə deyil';pv.innerHTML=ic('eye',14)+'Bax';pv.href='watch.html?id='+im;
+key.textContent=show?DEMO:MASK;kv.innerHTML=ic(show?'eyeoff':'eye',18);kr.innerHTML=ic('refresh',18);c1.innerHTML=ic('copy',18);
+tb.innerHTML=d.s.slice(0,6).map((s,i)=>`<tr><td>${s[1]}<span class="k2">${s[3]}</span></td><td>${['28 okt','26 okt','24 okt','22 okt','19 okt','17 okt'][i]}</td><td>${['3 s 12 d','2 s 40 d','4 s 05 d','1 s 55 d','2 s 20 d','3 s 00 d'][i]}</td><td>${s[4]}</td><td>${Math.round(s[4]*.62)}</td><td>+${Math.round(s[4]*.15)}</td></tr>`).join('')}
+go.onclick=()=>{live=!live;R()};kv.onclick=()=>{show=!show;R()};R();
+</script></body></html>
