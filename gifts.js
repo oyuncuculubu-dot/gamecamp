@@ -137,17 +137,37 @@ function scene(g,big){fit();const n=g[0],m=Math.min(W,H),s={t0:performance.now()
  if(!big){const sm=SC.filter(q=>!q.big);if(sm.length>=4){const o=sm[0];o.done=1;o.els.forEach(e=>e.remove())}s.x+=R(-8,8)}
  s.big=big;s.u=SCN[n](s);if(RM.matches){const u=s.u;s.u=(t,dt,q)=>{u(Math.max(t,1.1),dt,q)};}
  SC.push(s);kick();return s}
+// ---- intro videos for top gifts (VP9-alpha webm; H.264 black-bg mp4 + mix-blend-mode:screen for Safari/iOS) ----
+const VF={gem:'diamond',rocket:'rocket',crown:'crown',lion:'lion'};
+const tv=document.createElement('video'),ua=navigator.userAgent;
+const ALPHA=!/^((?!chrome|android|crios|fxios).)*safari/i.test(ua)&&!/iPhone|iPad|iPod/.test(ua)&&tv.canPlayType('video/webm; codecs="vp9"')!='';
+const gv=document.createElement('div');gv.className='gvid';player.insertBefore(gv,fx);const VC={},VBAD={};
+function vel(n){const f=VF[n];if(!f||VBAD[n]||RM.matches)return null;if(VC[n])return VC[n];
+ const v=document.createElement('video');v.muted=true;v.defaultMuted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='metadata';
+ v.className=ALPHA?'a':'scr';v.src=`gifts/${f}.${ALPHA?'webm':'mp4'}`;v.onerror=()=>{VBAD[n]=1};return VC[n]=v}
+const preV=n=>{const v=vel(n);if(v&&v.preload!='auto'){v.preload='auto';v.load()}};
+// light preload: metadata after idle; full file only when a big gift is selected in the panel
+setTimeout(()=>Object.keys(VF).forEach(vel),2500);
+gp.querySelectorAll('.gi').forEach(b=>b.addEventListener('click',()=>{const g=GL[b.dataset.i];if(VF[g[0]])preV(g[0])}));
+let curV=null;
+function stopV(){if(curV){curV.pause();curV.classList.remove('on');curV=null}}
+// returns duration (s) if video playback started, else null (caller falls back to code scene)
+function playV(g,onFail){const v=vel(g[0]);if(!v)return null;stopV();if(v.parentNode!==gv)gv.append(v);
+ curV=v;v.currentTime=0;let ok=0;const fail=()=>{if(ok||curV!==v)return;VBAD[g[0]]=1;stopV();onFail()};
+ v.onplaying=()=>{ok=1;v.classList.add('on')};v.onended=()=>{if(curV===v)stopV()};v.onerror=fail;
+ const p=v.play();p&&p.catch(fail);setTimeout(()=>{if(!ok&&v.readyState<2)fail()},1800);return 5}
 let bigT=null,lastBig=null,curBig=null;
 function showBig(u,g,k){gxb.style.setProperty('--gc',g[3]);fx.style.setProperty('--gc',g[3]);
  const same=lastBig&&lastBig.u==u&&lastBig.g==g&&curBig&&!curBig.done;
- if(!same){SC.filter(q=>q.big).forEach(q=>{q.done=1;q.els.forEach(e=>e.remove())});curBig=scene(g,1);
+ if(!same){SC.filter(q=>q.big).forEach(q=>{q.done=1;q.els.forEach(e=>e.remove())});stopV();
+  const vd=playV(g,()=>{curBig=scene(g,1)});if(vd){fit();curBig={t0:performance.now(),x:W/2,y:H*.44,vid:1,get done(){return !curV}}}else curBig=scene(g,1);
   gxb.innerHTML=`<div class="bnr"><span class="av">${u[0]}</span><div><b>${u}</b><small><em>${g[1]}</em> göndərdi · ${coin(13)} ${nf(g[2])}</small></div></div>`;
   gxb.classList.remove('on');void gxb.offsetWidth;gxb.classList.add('on')}
- else{curBig.t0=Math.max(curBig.t0,performance.now()-1500*1);gxb.querySelectorAll('.bnr').forEach(b=>b.getAnimations().forEach(a=>a.currentTime=Math.min(a.currentTime,800)));
+ else{if(curBig.vid&&curV){curV.currentTime=Math.min(curV.currentTime,1.5)}else curBig.t0=Math.max(curBig.t0,performance.now()-1500*1);gxb.querySelectorAll('.bnr').forEach(b=>b.getAnimations().forEach(a=>a.currentTime=Math.min(a.currentTime,800)));
   burstAt(curBig.x,curBig.y,30,{s0:2,s1:8,p:{k:'star',r:5,c:g[3],d:.02}})}
  lastBig={u,g};
  if(k>1){cnt.innerHTML=`<small>x</small>${k}`;cnt.classList.remove('pop');void cnt.offsetWidth;cnt.classList.add('pop')}else cnt.classList.remove('pop');
- clearTimeout(bigT);bigT=setTimeout(()=>{gxb.classList.remove('on');cnt.classList.remove('pop');lastBig=null},DUR[g[0]]*1000+200)}
+ clearTimeout(bigT);bigT=setTimeout(()=>{gxb.classList.remove('on');cnt.classList.remove('pop');lastBig=null},(curBig&&curBig.vid?5:DUR[g[0]])*1000+200)}
 const LN={};
 function laneAdd(u,g,k){const key=u+g[0];let e=LN[key];
  if(e){const i=e.el.querySelector('i');i.textContent='x'+k;i.classList.remove('bump');void i.offsetWidth;i.classList.add('bump');clearTimeout(e.t)}
@@ -157,7 +177,7 @@ const CM={};
 function chatAdd(u,g,k){const key=u+g[0];if(CM[key]&&CM[key].isConnected&&k>1){CM[key].querySelector('.x').textContent='x'+k;return}
  const d=document.createElement('div');d.className='m gft';d.innerHTML=`<img src="${ICN(g[0])}" alt=""><span class="t"><b>${u}</b>${g[1]} göndərdi</span><span class="x">x${k}</span>`;msgs.append(d);msgs.scrollTop=1e5;CM[key]=d}
 function fire(u,i,k){const g=GL[i];laneAdd(u,g,k);chatAdd(u,g,k);if(g[2]>=100)showBig(u,g,k);else scene(g,0)}
-window.GiftDemo={fire,open,GL,scene};
+window.GiftDemo={fire,open,GL,scene,video:()=>curV&&{src:curV.currentSrc,cls:curV.className,t:curV.currentTime}};
 // auto demo
 const U=['Kamal','Aysu','RəşadPro','Nigar','Toğrul','Leyla','Orxan'];
 const seq=[[1,0,1],[1,0,2],[3,1,1],[1,0,3],[0,6,1],[0,6,2],[0,6,3],[2,2,1],[4,4,1],[5,7,1],[3,1,2],[6,5,1]];

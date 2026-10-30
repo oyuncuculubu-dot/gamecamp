@@ -84,3 +84,12 @@
 .m.gft{flex:none}
 @media(max-width:600px){.lane{transition:opacity .3s}.player:has(.gxb.on) .lane{opacity:0}}
 @media(prefers-reduced-motion:reduce){.rays,.beams{display:none}}
+
+/* intro videos for top gifts: sit above code fx, under banner + combo */
+.gvid{position:absolute;inset:0;overflow:hidden;pointer-events:none;border-radius:inherit}
+.gvid video{position:absolute;left:50%;top:50%;height:112%;width:auto;max-width:none;transform:translate(-50%,-50%);opacity:0;transition:opacity .25s;z-index:4}
+.gvid video.on{opacity:1}
+.gvid video.scr{mix-blend-mode:screen}
+.gxb,.gxcnt{z-index:2}
+@media(max-width:700px){.gvid video{height:122%}}
+@media(prefers-reduced-motion:reduce){.gvid{display:none}}
