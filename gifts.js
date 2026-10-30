@@ -2,7 +2,7 @@
 const GL=[['rose','Gül',1,'255,70,90'],['heart','Ürək',5,'83,252,24'],['box','Sürpriz',10,'120,230,60'],['pad','Qızıl pult',50,'255,200,60'],['gem','Almaz',100,'90,190,255'],['rocket','Raket',500,'140,255,90'],['crown','Tac',1000,'255,196,40'],['lion','Şir',5000,'255,170,30']];
 const ICN=n=>`icons3d/gift_${n}.png`,coin=s=>`<img src="${ICN('coin')}" width="${s}" height="${s}" alt="">`;
 const nf=n=>n.toLocaleString('az-AZ').replace(/,/g,' ');
-let bal=12450,sel=4,combo=0,ct=null;
+const BK=()=>GC.ukey('coins');const getBal=()=>GC.user()?GC.LS.get(BK(),1000):0;let bal=getBal(),sel=4,combo=0,ct=null;
 const chat=document.querySelector('.chat'),player=document.getElementById('player');
 // hide old static gifts
 ['gh','gifts'].forEach(i=>{const e=document.getElementById(i);e&&e.remove()});
@@ -14,20 +14,25 @@ cin.prepend(gb);
 const sc=document.createElement('div');sc.className='gscrim';document.body.append(sc);
 const gp=document.createElement('div');gp.className='gp';gp.setAttribute('role','dialog');gp.setAttribute('aria-label','Hədiyyələr');
 gp.innerHTML=`<div class="gph"><h4>Hədiyyə göndər</h4><button class="x" aria-label="Bağla">${ic('chev',18)}</button></div>
-<div class="gtabs"><span class="on">Hədiyyələr</span><span>Xüsusi</span><span>Sənin</span></div>
+<div class="gtabs"><span class="on" data-t="all" role="button" tabindex="0">Hədiyyələr</span><span data-t="big" role="button" tabindex="0">Xüsusi</span><span data-t="cheap" role="button" tabindex="0">Sənin</span></div>
 <div class="gg">${GL.map((g,i)=>`<button class="gi${i==sel?' sel':''}" data-i="${i}"><img src="${ICN(g[0])}" alt="">${i==6?'<span class="tag">YENİ</span>':''}<b>${g[1]}</b><small>${coin(13)}${nf(g[2])}</small></button>`).join('')}</div>
-<div class="gf2"><div class="bal">${coin(22)}<div><span id="gbal">${nf(bal)}</span><small>Balans</small></div></div><button class="topup">Artır</button><button class="send" id="gsend">Göndər</button></div>`;
+<div class="gf2"><div class="bal">${coin(22)}<div><span id="gbal">${nf(bal)}</span><small>Balans</small></div></div><button class="topup" type="button">Artır</button><button class="send" id="gsend" type="button">Göndər</button></div><div class="gdemo">Demo valyuta: GC sikkələri real pul deyil. Başlanğıc balans 1 000 GC, "Artır" pulsuz 500 demo GC əlavə edir.</div>`;
 chat.append(gp);
 const open=v=>{gp.classList.toggle('open',v);sc.classList.toggle('on',v)};
 gb.onclick=()=>open(!gp.classList.contains('open'));gp.querySelector('.x').onclick=()=>open(false);sc.onclick=()=>open(false);
 gp.querySelectorAll('.gi').forEach(b=>b.onclick=()=>{sel=+b.dataset.i;combo=0;gp.querySelectorAll('.gi').forEach(x=>x.classList.toggle('sel',x==b));resetSend()});
 const send=gp.querySelector('#gsend');
+const showBal=()=>{bal=getBal();gbal.textContent=GC.user()?nf(bal):'—'};
+document.addEventListener('gc-auth',showBal);
+gp.querySelectorAll('.gtabs span').forEach(t=>t.onclick=t.onkeydown=e=>{if(e.key&&e.key!='Enter'&&e.key!=' ')return;gp.querySelectorAll('.gtabs span').forEach(x=>x.classList.toggle('on',x==t));
+ gp.querySelectorAll('.gi').forEach(b=>{const v=GL[b.dataset.i][2];b.style.display=t.dataset.t=='big'?(v>=500?'':'none'):t.dataset.t=='cheap'?(v<=getBal()?'':'none'):''})});
+gp.querySelector('.topup').onclick=()=>GC.need(()=>{bal=getBal()+500;GC.LS.set(BK(),bal);showBal();GC.toast('+500 demo GC əlavə edildi (real ödəniş yoxdur)')},'Balansı artırmaq üçün daxil ol.');
 const resetSend=()=>{send.className='send';send.innerHTML='Göndər'};
-send.onclick=()=>{const g=GL[sel];if(bal<g[2])return;bal-=g[2];gbal.textContent=nf(bal);combo++;
+send.onclick=()=>{if(!GC.user())return GC.openAuth('login',showBal,'Hədiyyə göndərmək üçün daxil ol.');const g=GL[sel];bal=getBal();if(bal<g[2])return GC.toast('Balans kifayət etmir. "Artır" ilə demo GC əlavə et.');bal-=g[2];GC.LS.set(BK(),bal);gbal.textContent=nf(bal);combo++;
  send.className='send combo';send.innerHTML=`Kombo <span class="cx">x${combo}</span><i class="ring"></i>`;
  send.querySelector('.ring').animate([{transform:'scaleX(1)'},{transform:'scaleX(0)'}],{duration:3000});
  clearTimeout(ct);ct=setTimeout(()=>{combo=0;resetSend()},3000);
- fire('Sən',sel,combo)};
+ fire(GC.user().name,sel,combo)};showBal();
 // fx layer
 const fx=document.createElement('div');fx.className='fx';fx.innerHTML='<canvas></canvas><div class="gxbig"></div><div class="gxcnt"></div>';player.append(fx);
 const lane=document.createElement('div');lane.className='lane';player.append(lane);

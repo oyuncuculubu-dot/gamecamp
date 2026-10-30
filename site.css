@@ -1,0 +1,38 @@
+/* GameCamp: auth, toast, menus, info pages */
+.btn.ua{display:inline-flex}
+.ua .uav{width:24px;height:24px;border-radius:50%;background:var(--c);color:#000;display:grid;place-items:center;font-size:12px;font-weight:800;margin-left:-8px}
+.ua.in{padding-left:12px}
+.umenu{position:absolute;right:0;top:48px;min-width:220px;background:var(--s1);border:1px solid var(--line);border-radius:var(--rm);padding:8px;display:none;z-index:60;box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.umenu.open{display:block}.uwrap{position:relative;display:inline-flex}
+.umenu .uh{padding:8px 12px 12px;border-bottom:1px solid var(--line);margin-bottom:8px}.umenu .uh b{display:block;font-size:14px}.umenu .uh small{color:var(--t2);font-size:12px}
+.umenu a,.umenu button{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border-radius:var(--r);font-size:14px;font-weight:600;text-align:left}
+.umenu a:hover,.umenu button:hover{background:rgba(255,255,255,.06)}
+.mscrim{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:90;display:none;align-items:center;justify-content:center;padding:16px}
+.mscrim.on{display:flex}
+.modal{width:100%;max-width:420px;background:var(--s1);border:1px solid var(--line);border-radius:var(--rm);padding:32px;position:relative}
+.modal h2{font-size:28px;font-weight:900;letter-spacing:-.03em;margin:8px 0 4px}.modal p.mp{color:var(--t2);font-size:14px;margin-bottom:20px}
+.modal .mx{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.mtabs{display:flex;border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:20px}
+.mtabs button{flex:1;height:36px;border-radius:999px;font-weight:700;font-size:14px;color:var(--t2)}.mtabs button.on{background:#fff;color:#000}
+.modal label,.ipg label{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin:12px 0 6px}
+.modal input,.ipg input,.ipg textarea,.srch input{width:100%;height:44px;background:#000;border:1px solid var(--line);border-radius:var(--r);color:#fff;padding:0 14px;font:inherit;font-size:15px;outline:0}
+.ipg textarea{height:120px;padding:12px 14px;resize:vertical}
+.modal input:focus,.ipg input:focus,.ipg textarea:focus,.srch input:focus{border-color:var(--c)}
+.modal input.bad{border-color:#e5243b}
+.merr{color:#ff6b7d;font-size:13px;min-height:18px;margin-top:10px}
+.modal .btn.p{width:100%;justify-content:center;height:48px;margin-top:8px;font-size:15px}
+.mnote{color:var(--t2);font-size:12px;margin-top:12px;line-height:18px}
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,20px);background:#fff;color:#000;font-weight:700;font-size:14px;padding:12px 20px;border-radius:999px;opacity:0;transition:.25s;z-index:100;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.srch{position:relative;margin:0 0 16px}.srch svg{position:absolute;left:14px;top:14px;color:var(--t2)}.srch input{padding-left:40px;height:46px;border-radius:999px}
+.ev .btn.on{border-color:var(--c);color:var(--c)}
+.btn.on{border-color:var(--c)}
+.ipg{padding:48px 0 24px;max-width:760px}.ipg h1{font-size:56px;line-height:60px;font-weight:900;letter-spacing:-.04em;margin:12px 0 16px}
+.ipg p,.ipg li{color:var(--t2);font-size:16px;line-height:26px;margin-bottom:12px}.ipg ul{padding-left:20px}
+.ipg h3{font-size:20px;margin:24px 0 8px}.ipg .btn{margin-top:16px}
+.inav{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}.inav a{padding:8px 14px;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:700}.inav a.on{background:#fff;color:#000}
+.player.paused .pbig{opacity:1}.player.muted .ctl button[aria-label="Səs"]{color:var(--c)}
+.gdemo{font-size:11px;color:var(--t2);padding:0 16px 10px;line-height:15px}
+@media(max-width:600px){.btn.ua{display:inline-flex;height:32px;padding:0 12px}.ua .ut{max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.modal{padding:24px}.ipg h1{font-size:36px;line-height:40px}.r{align-items:center}}
+@media(max-width:600px){.ev .btn.g,.rk .btn.g{display:inline-flex}}
+.player .pbig{z-index:4}.player .ctl{pointer-events:none}.player .ctl>*{pointer-events:auto}@media(max-width:600px){.player .ctl{padding-top:24px}}

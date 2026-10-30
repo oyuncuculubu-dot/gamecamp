@@ -1,9 +1,9 @@
 <!doctype html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>İzlə · GameCamp</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="gifts.css"></head><body>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="gifts.css"></head><body>
 <header><div class="wrap"><a class="logo" href="index.html">Game<b>Camp</b></a>
 <nav class="sw" id="sw"></nav>
-<div class="r"><a class="btn g" href="#" id="b1"></a><a class="btn p" href="dashboard.html" id="b2"></a></div></div></header>
+<div class="r"><a class="btn g" href="#" id="b1" data-auth></a><a class="btn p" href="dashboard.html" id="b2"></a></div></div></header>
 <main class="wrap">
 <div class="crumb" id="crumb"></div>
 <div class="wl"><div>
@@ -16,21 +16,36 @@
 <form class="cin" id="cin"><input id="ci" placeholder="Mesaj yaz..." maxlength="200" aria-label="Mesaj"><button class="btn p" aria-label="Göndər" id="cs"></button></form></aside></div>
 <div class="sth" id="rh"></div><div class="rel" id="rel"></div>
 </main>
-<footer><div class="wrap"><div class="fl"><span>© 2026 GameCamp. Azərbaycan dilində oyun və söhbət yayınları.</span><nav><a href="#">Haqqımızda</a><a href="#">Qaydalar</a><a href="#">Dəstək</a><a href="#">Məxfilik</a></nav></div></div></footer>
-<script src="data.js"></script><script>
+<footer><div class="wrap"><div class="fl"><span>© 2026 GameCamp. Azərbaycan dilində oyun və söhbət yayınları.</span><nav><a href="info.html?p=about">Haqqımızda</a><a href="info.html?p=rules">Qaydalar</a><a href="info.html?p=support">Dəstək</a><a href="info.html?p=privacy">Məxfilik</a><a href="info.html?p=contact">Əlaqə</a></nav></div></div></footer>
+<script src="data.js"></script><script src="site.js"></script><script>
 const q=new URLSearchParams(location.search).get('id')||'g2';
 W=q[0]=='t'?'talk':'game';document.body.className=W;
 const d=D[W],x=d.s.find(s=>s[0]==q)||d.s[0],g=W=='game';
 document.title=x[1]+' · GameCamp';
 sw.innerHTML=`<a href="index.html#game" class="${g?'on':''}">${ic('gamepad')}Oyun</a><a href="index.html#talk" class="${g?'':'on'}">${ic('mic')}Söhbət</a>`;
-b1.innerHTML=ic('user')+'Daxil ol';b2.innerHTML=ic('radio')+'Yayına başla';
+b2.innerHTML=ic('radio')+'Yayına başla';
 crumb.innerHTML=`<a href="index.html#${W}">${d.name}</a>${ic('arrow',12)}<b>${x[3]}</b>`;
 player.innerHTML=`<img src="assets/${x[0]}.jpg" alt=""><div class="tl2"><span class="live">CANLI</span><span class="pill">${ic('eye',14)}${fmt(x[4])} izləyici</span></div><span class="pill q">1080p60</span>
 <button class="pbig" aria-label="Oynat">${ic('play',32)}</button>
 <div class="ctl"><button aria-label="Fasilə">${ic('pause',20)}</button><button aria-label="Səs">${ic('vol',20)}</button><span class="lv">CANLI</span><div class="bar"><i></i></div><button aria-label="Paylaş" class="hm2">${ic('share',20)}</button><button aria-label="Ayarlar">${ic('gear',20)}</button><button aria-label="Tam ekran">${ic('max',20)}</button></div>`;
 wt.innerHTML=`<div class="kick">${i3(CI[x[3]],28)}${d.name} · ${x[3]}</div><h1>${x[1]}</h1><div class="wmeta"><span>${ic('eye',16)}${fmt(x[4])} canlı izləyici</span><span>${ic('radio',16)}2 saat 14 dəqiqədir yayında</span><span>${ic('layout',16)}Azərbaycan dili</span></div>`;
 who.innerHTML=`<span class="av">${x[2][0]}</span><div class="nm"><b>${x[2]}</b><small>${fmt(x[4]*31)} izləyici · ${x[3]} yayınçısı</small></div><div class="acts"><button class="btn p" id="fl">${ic('heart',16)}<span>İzlə</span></button><button class="btn g" id="sb">${i3('star',24)}Abunə ol</button><button class="btn g" aria-label="Paylaş">${ic('share',16)}</button></div>`;
-fl.onclick=()=>{const o=fl.classList.toggle('on');fl.lastChild.textContent=o?'İzləyirsən':'İzlə'};
+const FK=()=>GC.ukey('follow'),SK=()=>GC.ukey('subs');
+function syncAct(){const f=GC.LS.get(FK(),[]).includes(x[2]),u=GC.LS.get(SK(),[]).includes(x[2]);fl.classList.toggle('on',f);fl.lastChild.textContent=f?'İzləyirsən':'İzlə';fl.setAttribute('aria-pressed',f);
+ sb.classList.toggle('on',u);sb.lastChild.textContent=u?'Abunəsən':'Abunə ol';sb.setAttribute('aria-pressed',u)}
+const tog=(k,on,off)=>{let a=GC.LS.get(k(),[]);const o=a.includes(x[2]);a=o?a.filter(v=>v!=x[2]):[...a,x[2]];GC.LS.set(k(),a);syncAct();GC.toast(o?off:on)};
+fl.onclick=()=>GC.need(()=>tog(FK,x[2]+' izləmə siyahına əlavə edildi',x[2]+' izləmə siyahından çıxarıldı'),x[2]+' yayınçısını izləmək üçün daxil ol.');
+sb.onclick=()=>GC.need(()=>tog(SK,'Abunə oldun (demo, ödəniş yoxdur)','Abunəlik ləğv edildi'),'Abunə olmaq üçün daxil ol.');
+syncAct();document.addEventListener('gc-auth',syncAct);
+document.querySelectorAll('[aria-label="Paylaş"]').forEach(b=>b.onclick=()=>GC.copy(location.origin+location.pathname+'?id='+x[0],'Yayın linki kopyalandı'));
+const pl=player,pb=pl.querySelector('.pbig'),cb=pl.querySelectorAll('.ctl button');
+const setPlay=v=>{pl.classList.toggle('paused',!v);cb[0].innerHTML=ic(v?'pause':'play',20);cb[0].setAttribute('aria-label',v?'Fasilə':'Oynat');pb.style.display=v?'none':''};
+let playing=false;setPlay(false);
+pb.onclick=()=>{playing=true;setPlay(true);GC.toast('Canlı yayım (demo görüntü)')};cb[0].onclick=()=>{playing=!playing;setPlay(playing)};
+cb[1].onclick=()=>{const m=pl.classList.toggle('muted');cb[1].innerHTML=ic(m?'eyeoff':'vol',20);GC.toast(m?'Səs söndürüldü':'Səs açıldı')};
+const QL=['1080p60','720p60','480p','Avto'];let qi=0;const qp=pl.querySelector('.pill.q');
+pl.querySelector('[aria-label="Ayarlar"]').onclick=()=>{qi=(qi+1)%QL.length;qp.textContent=QL[qi];GC.toast('Keyfiyyət: '+QL[qi])};
+pl.querySelector('[aria-label="Tam ekran"]').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else if(pl.requestFullscreen)pl.requestFullscreen().catch(()=>GC.toast('Tam ekran bu brauzerdə dəstəklənmir'))};
 gh.innerHTML=i3('cup',40)+'<h3>Dəstək ol</h3>';
 const G=[['star','Ulduz',10],['cup','Çay',25],['bell','Zəng',50],['medal3','Bürünc',100],['medal2','Gümüş',250],['trophy','Kubok',500]];
 gifts.innerHTML=G.map(a=>`<button class="gf" data-n="${a[1]}" data-i="${a[0]}">${i3(a[0],64)}<b>${a[1]}</b><small>${a[2]} GC</small></button>`).join('');
@@ -42,7 +57,12 @@ msgs.innerHTML=h.join('');msgs.scrollTop=1e5;
 cc.innerHTML=ic('eye',14)+fmt(x[4]);pin.innerHTML=i3('bell',24)+`<span><b>${x[2]}:</b> xoş gəldiniz! Hörmətli olun, reklam etməyin.</span>`;
 cs.innerHTML=ic('send',16);
 const add=t=>{msgs.insertAdjacentHTML('beforeend',t);msgs.scrollTop=1e5};
-cin.onsubmit=e=>{e.preventDefault();const v=ci.value.trim();if(!v)return;const s=document.createElement('div');s.className='m';s.innerHTML='<b style="color:var(--c)">Sən</b>';s.append(v);msgs.append(s);msgs.scrollTop=1e5;ci.value=''};
+const CK='gc_chat_'+x[0];
+const putMsg=(n,v)=>{const s=document.createElement('div');s.className='m';const b=document.createElement('b');b.style.color='var(--c)';b.textContent=n;s.append(b,v);msgs.append(s);msgs.scrollTop=1e5};
+GC.LS.get(CK,[]).forEach(m=>putMsg(m[0],m[1]));
+const chatPh=()=>{ci.placeholder=GC.user()?'Mesaj yaz...':'Yazmaq üçün daxil ol'};chatPh();document.addEventListener('gc-auth',chatPh);
+ci.onfocus=()=>{if(!GC.user()){ci.blur();GC.openAuth('login',()=>ci.focus(),'Çata yazmaq üçün daxil ol.')}};
+cin.onsubmit=e=>{e.preventDefault();if(!GC.user())return GC.openAuth('login',()=>ci.focus(),'Çata yazmaq üçün daxil ol.');const v=ci.value.trim();if(!v)return;const n=GC.user().name;putMsg(n,v);const a=GC.LS.get(CK,[]);a.push([n,v]);GC.LS.set(CK,a.slice(-50));ci.value=''};
 gifts.querySelectorAll('.gf').forEach(b=>b.onclick=()=>add(`<div class="m gift">${i3(b.dataset.i,32)}<span><b style="color:var(--c)">Sən</b>${b.dataset.n} göndərdin</span></div>`));
 rh.innerHTML=i3('live',40)+'<h3>Oxşar yayınlar</h3>';
 rel.innerHTML=d.s.filter(s=>s[0]!=x[0]).sort((a,b)=>(b[3]==x[3])-(a[3]==x[3])).slice(0,4).map(s=>`<a class="card" href="watch.html?id=${s[0]}"><div class="th"><img src="assets/${s[0]}.jpg" alt=""><span class="live">CANLI</span><span class="pill">${ic('eye',14)}${fmt(s[4])}</span></div><div class="k">${s[3]}</div><div class="ti">${s[1]}</div><div class="sub">${s[2]}</div></a>`).join('');

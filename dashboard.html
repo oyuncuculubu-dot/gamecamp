@@ -1,43 +1,54 @@
 <!doctype html><html lang="az"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Yayıncı paneli · GameCamp</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
-<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dash.css"></head><body>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="site.css"><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dash.css"></head><body>
 <header><div class="wrap"><a class="logo" href="index.html">Game<b>Camp</b></a><nav class="sw" id="sw"></nav>
-<div class="r"><a class="btn g" href="index.html" id="b1"></a></div></div></header>
+<div class="r"><a class="btn g" href="#" id="ua" data-auth></a><a class="btn g" href="index.html" id="b1"></a></div></div></header>
 <main class="wrap">
-<div class="dh"><div><div class="kick" id="dk"></div><h1>Yayıncı paneli</h1></div><div class="st" id="st"><span class="dot"></span><span id="stt">Efirdə deyil</span><a class="btn g" href="#" id="pv" style="height:32px"></a></div></div>
+<div class="dh"><div><div class="kick" id="dk"></div><h1>Yayıncı paneli</h1></div><div class="st" id="st"><span class="dot"></span><span id="stt">Efirdə deyil</span><a class="btn g" href="watch.html" id="pv" style="height:32px"></a></div></div>
 <div class="dg">
 <div class="sc3w" id="stats"></div>
 <section class="pn s7"><h3 id="h1"></h3>
-<label for="ti">Yayın başlığı</label><input class="inp" id="ti" maxlength="80">
+<label for="ti">Yayın başlığı</label><input class="inp" id="ti" maxlength="80"><small class="note" id="tic" style="display:block;margin-top:6px"></small>
 <label>Bölmə</label><div class="seg" id="seg"></div>
 <label>Alt kateqoriya</label><div class="subs" id="subs"></div>
-<button class="btn p golive" id="go"></button></section>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px"><button class="btn g" type="button" id="sv" style="display:inline-flex;height:48px;padding:0 24px"></button></div><button class="btn p golive" id="go"></button><p class="note" id="svn"></p></section>
 <section class="pn s5"><h3 id="h2"></h3><div class="prev" id="prev"></div>
 <label>Server ünvanı</label><div class="fld"><div class="inp mono" style="letter-spacing:0">rtmp://ingest.gamecamp.az/live</div><button class="ib" aria-label="Kopyala" id="c1"></button></div>
-<label>Yayın açarı</label><div class="fld"><div class="inp mono" id="key"></div><button class="ib" aria-label="Göstər" id="kv"></button><button class="ib" aria-label="Yenilə" id="kr"></button></div>
+<label>Yayın açarı</label><div class="fld"><div class="inp mono" id="key"></div><button class="ib" aria-label="Göstər" id="kv"></button><button class="ib" aria-label="Açarı kopyala" id="c2"></button><button class="ib" aria-label="Yenilə" id="kr"></button></div>
 <p class="note">Nümunə açardır. Həqiqi açarı heç kimlə paylaşma.</p></section>
 <section class="pn s12"><h3 id="h3"></h3><div class="tw"><table><thead><tr><th>Yayın</th><th>Tarix</th><th>Müddət</th><th>Pik izləyici</th><th>Orta</th><th>Yeni izləyicilər</th></tr></thead><tbody id="tb"></tbody></table></div></section>
 </div></main>
-<footer style="margin-top:64px"><div class="wrap"><div class="fl"><span>© 2026 GameCamp. Yayıncı paneli.</span><nav><a href="#">Yayıncı qaydaları</a><a href="#">Dəstək</a></nav></div></div></footer>
-<script src="data.js"></script><script>
-let live=false,show=false,cat=null;W=location.hash=='#talk'?'talk':'game';
-const MASK='••••••••••••••••••••',DEMO='gc_live_nümunə_0000_0000';
+<footer style="margin-top:64px"><div class="wrap"><div class="fl"><span>© 2026 GameCamp. Yayıncı paneli.</span><nav><a href="info.html?p=streamer">Yayıncı qaydaları</a><a href="info.html?p=support">Dəstək</a></nav></div></div></footer>
+<script src="data.js"></script><script src="site.js"></script><script>
+const S=Object.assign({live:false,start:0,W:'game',cat:null,title:{},key:'gc_live_demo_0000_0000',saved:0},GC.LS.get('gc_dash',{}));
+let live=S.live,show=false,cat=S.cat;W=location.hash=='#talk'?'talk':location.hash=='#game'?'game':S.W;
+const MASK='••••••••••••••••••••';const save=()=>GC.LS.set('gc_dash',S);
+const dur=()=>{const t=Math.floor((Date.now()-S.start)/1000);return [t/3600,t/60%60,t%60].map(v=>String(Math.floor(v)).padStart(2,'0')).join(':')};
+setInterval(()=>{if(live)stt.textContent='Efirdəsən · '+dur()},1000);
 function R(){const d=D[W],g=W=='game';document.body.className=W;if(!d.cats.includes(cat)||cat=='Hamısı')cat=d.cats[1];
 sw.innerHTML=`<a href="#game" data-x="game" class="${g?'on':''}">${ic('gamepad')}Oyun</a><a href="#talk" data-x="talk" class="${g?'':'on'}">${ic('mic')}Söhbət</a>`;
-sw.querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();W=a.dataset.x;history.replaceState(0,'','#'+W);R()});
+sw.querySelectorAll('a').forEach(a=>a.onclick=e=>{e.preventDefault();W=a.dataset.x;S.W=W;save();history.replaceState(0,'','#'+W);R()});
 b1.innerHTML=ic('back',16)+'Ana səhifə';dk.innerHTML=i3('live',28)+'Studiya · '+d.name;
 stats.innerHTML=[['eye','Canlı izləyici',live?'312':'0','+18% keçən həftəyə'],['calendar','İzləmə vaxtı (30 gün)','1 284 saat','+9%'],['star','Yeni izləyicilər (30 gün)','486','+27%']].map(s=>`<div class="pn s4 sc3">${i3(s[0],64)}<small>${s[1]}</small><b>${s[2]}</b><span class="up">${ic('up',14)}${s[3]}</span></div>`).join('');
 h1.innerHTML=i3(g?'cs2':'mic',40)+'Yayın məlumatı';h2.innerHTML=i3('block',40)+'Önizləmə və açar';h3.innerHTML=i3('trophy',40)+'Son yayınlar';
-if(!ti.value||ti.dataset.w!=W){ti.value=g?'Premier rank — gecə sessiyası':'Gecə söhbəti: günün mövzuları';ti.dataset.w=W}
+if(ti.dataset.w!=W){ti.value=S.title[W]||(g?'Premier rank — gecə sessiyası':'Gecə söhbəti: günün mövzuları');ti.dataset.w=W}tic.textContent=ti.value.length+'/80';sv.innerHTML=ic('check',18)+'Yadda saxla';c2.innerHTML=ic('copy',18);
 seg.innerHTML=`<button class="${g?'on':''}" data-x="game">${i3('cs2',48)}Oyun</button><button class="${g?'':'on'}" data-x="talk">${i3('mic',48)}Söhbət</button>`;
-seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{W=b.dataset.x;history.replaceState(0,'','#'+W);R()});
+seg.querySelectorAll('button').forEach(b=>b.onclick=()=>{W=b.dataset.x;S.W=W;save();history.replaceState(0,'','#'+W);R()});
 subs.innerHTML=d.cats.slice(1).map(c=>`<button class="chip${c==cat?' on':''}" data-c="${c}">${i3(CI[c],24)}${c}</button>`).join('');
-subs.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{cat=b.dataset.c;R()});
+subs.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{cat=b.dataset.c;S.cat=cat;save();R()});
 const im=d.s.find(s=>s[3]==cat)[0];
 prev.innerHTML=`<img src="assets/${im}.jpg" alt="">`+(live?`<span class="live">CANLI</span>`:`<div class="off">Önizləmə · siqnal gözlənilir</div>`);
 go.className='btn p golive'+(live?' end':'');go.innerHTML=live?ic('pause',18)+'Yayını bitir':ic('radio',18)+'Efirə çıx';
-st.classList.toggle('on',live);stt.textContent=live?'Efirdəsən · 00:12:48':'Efirdə deyil';pv.innerHTML=ic('eye',14)+'Bax';pv.href='watch.html?id='+im;
-key.textContent=show?DEMO:MASK;kv.innerHTML=ic(show?'eyeoff':'eye',18);kr.innerHTML=ic('refresh',18);c1.innerHTML=ic('copy',18);
+st.classList.toggle('on',live);stt.textContent=live?'Efirdəsən · '+dur():'Efirdə deyil';pv.innerHTML=ic('eye',14)+'Bax';pv.href='watch.html?id='+im;
+key.textContent=show?S.key:MASK;kv.innerHTML=ic(show?'eyeoff':'eye',18);kr.innerHTML=ic('refresh',18);c1.innerHTML=ic('copy',18);
 tb.innerHTML=d.s.slice(0,6).map((s,i)=>`<tr><td>${s[1]}<span class="k2">${s[3]}</span></td><td>${['28 okt','26 okt','24 okt','22 okt','19 okt','17 okt'][i]}</td><td>${['3 s 12 d','2 s 40 d','4 s 05 d','1 s 55 d','2 s 20 d','3 s 00 d'][i]}</td><td>${s[4]}</td><td>${Math.round(s[4]*.62)}</td><td>+${Math.round(s[4]*.15)}</td></tr>`).join('')}
-go.onclick=()=>{live=!live;R()};kv.onclick=()=>{show=!show;R()};R();
+const persist=()=>{S.W=W;S.cat=cat;S.title[W]=ti.value.trim()||ti.value;save()};
+go.onclick=()=>{if(!ti.value.trim())return GC.toast('Yayın başlığı boş ola bilməz'),ti.focus();live=!live;S.live=live;S.start=live?Date.now():0;persist();R();GC.toast(live?'Demo yayın başladı: '+ti.value.trim():'Yayın bitirildi')};
+kv.onclick=()=>{show=!show;R()};
+c1.onclick=()=>GC.copy('rtmp://ingest.gamecamp.az/live','Server ünvanı kopyalandı');
+c2.onclick=()=>GC.copy(S.key,'Yayın açarı kopyalandı (demo açar)');
+kr.onclick=()=>{if(!confirm('Yeni açar yaradılsın? Köhnə açar işləməyəcək.'))return;S.key='gc_live_demo_'+[...crypto.getRandomValues(new Uint8Array(6))].map(v=>v.toString(16).padStart(2,'0')).join('');save();show=true;R();GC.toast('Yeni demo açar yaradıldı')};
+ti.oninput=()=>{tic.textContent=ti.value.length+'/80'};
+sv.onclick=()=>{if(!ti.value.trim())return GC.toast('Yayın başlığı boş ola bilməz'),ti.focus();persist();svn.textContent='Yadda saxlanıldı: '+new Date().toLocaleTimeString('az-AZ',{hour:'2-digit',minute:'2-digit'});GC.toast('Ayarlar yadda saxlanıldı')};
+R();
 </script></body></html>
